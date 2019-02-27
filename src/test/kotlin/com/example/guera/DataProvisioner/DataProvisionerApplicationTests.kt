@@ -47,11 +47,11 @@ class DataProvisionerApplicationTests {
 		val book = gueraBookRepo.save(Guerabook(title = "First book"))
 		val board = boardRepo.save(Board(title = "First Board", guerabook = book))
 		val checklist = checkRepo.save(Checklist(title = "Basic Checklist", description = "I am the Senate", board = board))
-		val task1 = Task(title = "Do the laundry", description = "", checklist = checklist, board = board)
+		val task1 = Task(title = "Do the laundry", description = "", checklist = checklist, board = board, completionDate = null)
 
 		val task = taskRepo.save(task1)
 
-		Assert.assertEquals("First book", task.board.guerabook.title)
+		Assert.assertEquals("First book", task.board?.guerabook?.title)
 		Assert.assertEquals("Do the laundry", task.title)
 	}
 

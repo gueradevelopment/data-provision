@@ -1,5 +1,7 @@
 package com.example.guera.DataProvisioner.Models
 
+import org.springframework.data.jpa.repository.Temporal
+import java.util.Date
 import javax.persistence.Id
 import javax.persistence.*
 
@@ -11,7 +13,10 @@ data class Guerabook (
     @GeneratedValue
     val id: Long = 0L,
     @Column(name = "title")
-    val title: String
+    val title: String,
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "board_id")
+    val boards: List<Board> = listOf()
 )
 
 @Entity
@@ -25,7 +30,10 @@ data class Board (
     val title: String,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "guerabook_id")
-    val guerabook: Guerabook
+    var guerabook: Guerabook?,
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "checklist_id")
+    val checklists: List<Checklist> = listOf()
 )
 
 @Entity
@@ -41,7 +49,10 @@ data class Checklist (
     val description: String,
     @ManyToOne
     @JoinColumn(name = "board_id")
-    val board: Board
+    var board: Board?,
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "task_id")
+    val tasks: List<Task> = listOf()
 )
 
 @Entity
@@ -55,10 +66,13 @@ data class Task (
     val title: String,
     @Column(name = "description")
     val description: String,
+    @Column(name = "completion_date")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    var completionDate: Date?,
     @ManyToOne
     @JoinColumn(name ="board_id")
-    val board: Board,
+    var board: Board?,
     @ManyToOne
     @JoinColumn(name ="checklist_id")
-    val checklist: Checklist
+    var checklist: Checklist?
 )

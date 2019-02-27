@@ -47,6 +47,9 @@ data class Checklist (
     val title: String,
     @Column(name = "description")
     val description: String,
+    @Column(name = "completion_date")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    var completionDate: Date?,
     @ManyToOne
     @JoinColumn(name = "board_id")
     var board: Board?,

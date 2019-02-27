@@ -2,24 +2,32 @@ package com.example.guera.DataProvisioner.Services
 
 import com.example.guera.DataProvisioner.Interfaces.IGuerabookService
 import com.example.guera.DataProvisioner.Models.Guerabook
+import com.example.guera.DataProvisioner.Repositories.IGuerabookRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service("IGuerabookService")
-class GuerabookService : IGuerabookService {
+class GuerabookService(
+    @Autowired private val guerabookRepository: IGuerabookRepository
+) : IGuerabookService {
 
-    override fun findGuerabook(id: Long): Guerabook? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun findGuerabook(id: Long): Guerabook? = guerabookRepository.findByIdOrNull(id)
 
     override fun addGuerabook(guerabook: Guerabook): Long {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val savedBook = guerabookRepository.save(guerabook)
+        return savedBook.id
     }
 
     override fun modifyGuerabook(guerabook: Guerabook): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (!guerabookRepository.existsById(guerabook.id)) return false
+        guerabookRepository.save(guerabook)
+        return true
     }
 
     override fun removeGuerabook(id: Long): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val exists = guerabookRepository.existsById(id)
+        guerabookRepository.deleteById(id)
+        return exists
     }
 }

@@ -7,6 +7,7 @@ import com.example.guera.DataProvisioner.Repositories.IChecklistRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import java.util.*
 
@@ -16,37 +17,44 @@ class ChecklistService(
     @Autowired private val boardRepository: IBoardRepository
 ) : IChecklistService {
 
-    override fun findChecklist(id: Long): Checklist? = checklistRepository.findByIdOrNull(id)
+    @Transactional
+    override fun find(id: UUID): Checklist? = checklistRepository.findByIdOrNull(id)
 
-    override fun addChecklist(checklist: Checklist): Long {
+    override fun add(checklist: Checklist): UUID {
         val savedChecklist = checklistRepository.save(checklist)
         return savedChecklist.id
     }
 
-    override fun addChecklist(checklist: Checklist, boardId: Long): Long {
-        val board = boardRepository.findByIdOrNull(boardId) ?: return 0L
+    override fun add(checklist: Checklist, boardId: UUID): UUID {
+        val board = boardRepository.findByIdOrNull(boardId) ?: return UUID(0, 0)
         checklist.board = board
-        return addChecklist(checklist)
+        return add(checklist)
     }
 
-    override fun modifyChecklist(checklist: Checklist): Boolean {
+    @Transactional
+    override fun findAll(): List<Checklist> = checklistRepository.findAll()
+
+    @Transactional
+    override fun findAllId(): List<String> = checklistRepository.findAll().map { it.id.toString() }
+
+    override fun modify(checklist: Checklist): Boolean {
         if (!checklistRepository.existsById(checklist.id)) return false
         checklistRepository.save(checklist)
         return true
     }
 
-    override fun removeChecklist(id: Long): Boolean {
+    override fun remove(id: UUID): Boolean {
         val exists = checklistRepository.existsById(id)
         checklistRepository.deleteById(id)
         return exists
     }
 
-    override fun markAsComplete(id: Long): Date? {
+    override fun markAsComplete(id: UUID): Date? {
         val checklist = checklistRepository.findByIdOrNull(id) ?: return null
         if (checklist.completionDate != null) return null
         val now = Date.from(Instant.now())
         checklist.completionDate = now
-        checklist.tasks.forEach { if (it.completionDate != null) it.completionDate = now }
+        checklist.tasksProxy().forEach { if (it.completionDate != null) it.completionDate = now }
         return now
     }
 }

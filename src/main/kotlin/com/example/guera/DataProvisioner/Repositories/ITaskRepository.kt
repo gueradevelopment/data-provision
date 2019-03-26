@@ -1,6 +1,7 @@
 package com.example.guera.DataProvisioner.Repositories
 
 import com.example.guera.DataProvisioner.Models.Task
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.jpa.repository.JpaRepository
+import java.util.*
 
-interface ITaskRepository : CrudRepository<Task, Long> {}
+interface ITaskRepository : JpaRepository<Task, UUID>

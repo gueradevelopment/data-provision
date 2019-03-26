@@ -1,5 +1,8 @@
 package com.example.guera.DataProvisioner
 
+import com.example.guera.DataProvisioner.Extensions.writeValueAsString
+import com.example.guera.DataProvisioner.Interfaces.IGuerabookService
+import com.example.guera.DataProvisioner.Interfaces.ITaskService
 import com.example.guera.DataProvisioner.Models.Board
 import com.example.guera.DataProvisioner.Models.Checklist
 import com.example.guera.DataProvisioner.Models.Guerabook
@@ -8,6 +11,18 @@ import com.example.guera.DataProvisioner.Repositories.IBoardRepository
 import com.example.guera.DataProvisioner.Repositories.IChecklistRepository
 import com.example.guera.DataProvisioner.Repositories.IGuerabookRepository
 import com.example.guera.DataProvisioner.Repositories.ITaskRepository
+import com.example.guera.DataProvisioner.Services.ChecklistService
+import com.example.guera.DataProvisioner.Services.GuerabookService
+import com.example.guera.DataProvisioner.Services.TaskService
+import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter
+import org.h2.engine.Session
+import org.hibernate.Hibernate
+import org.hibernate.LazyInitializationException
+import org.hibernate.SessionFactory
+import org.hibernate.boot.internal.SessionFactoryBuilderImpl
+import org.hibernate.internal.SessionFactoryImpl
 
 import org.junit.Assert
 import org.junit.BeforeClass
@@ -17,7 +32,12 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.data.jpa.provider.HibernateUtils
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.orm.hibernate5.SessionFactoryUtils
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
@@ -31,6 +51,10 @@ class DataProvisionerApplicationTests {
 		lateinit var checkRepo: IChecklistRepository
 		lateinit var taskRepo: ITaskRepository
 
+		lateinit var taskService: ITaskService
+		lateinit var guerabookService: IGuerabookService
+		lateinit var theId: UUID
+
 		@BeforeClass @JvmStatic
 		fun init() {
 			context = runApplication<DataProvisionerApplication>()
@@ -38,21 +62,43 @@ class DataProvisionerApplicationTests {
 			boardRepo = context.getBean()
 			checkRepo = context.getBean()
 			taskRepo = context.getBean()
+			taskService = context.getBean()
+			guerabookService = context.getBean()
 		}
 
 	}
 
 	@Test
 	fun basicStoring() {
+
 		val book = gueraBookRepo.save(Guerabook(title = "First book"))
 		val board = boardRepo.save(Board(title = "First Board", guerabook = book))
-		val checklist = checkRepo.save(Checklist(title = "Basic Checklist", description = "I am the Senate", board = board))
-		val task1 = Task(title = "Do the laundry", description = "", checklist = checklist, board = board, completionDate = null)
+		var checklist = checkRepo.save(Checklist(title = "Basic Checklist", description = "I am the Senate", board = board))
+		val task1 = Task(title = "Do the laundry", description = "", checklist = checklist)
+		val task2 = Task(title = "Invoke magic", description = "", checklist = checklist)
 
-		val task = taskRepo.save(task1)
+		val id = taskRepo.save(task1).id
+		theId = book.id
 
-		Assert.assertEquals("First book", task.board?.guerabook?.title)
+		taskRepo.save(task2)
+
+		val task = taskService.find(id) ?: throw Exception("Null lol")
+
+		Assert.assertEquals("I am the Senate", task.checklist?.description)
 		Assert.assertEquals("Do the laundry", task.title)
+
+		val gotCheck = checkRepo.findById(checklist.id).get()
+		val tasks = gotCheck.tasksProxy()
+		println(tasks.size)
+	}
+
+	@Test
+	fun basicRetrieval() {
+
+		val book = guerabookService.find(theId)
+		Assert.assertNotNull(book)
+		val str = ObjectMapper().writeValueAsString(book)
+		println(str)
 	}
 
 }

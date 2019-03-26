@@ -5,8 +5,9 @@ import com.example.guera.DataProvisioner.Models.Board
 import com.example.guera.DataProvisioner.Repositories.IBoardRepository
 import com.example.guera.DataProvisioner.Repositories.IGuerabookRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service("IBoardService")
 class BoardService(
@@ -14,26 +15,33 @@ class BoardService(
     @Autowired private val guerabookRepository: IGuerabookRepository
 ) : IBoardService {
 
-    override fun findBoard(id: Long): Board? = boardRepository.findByIdOrNull(id)
+    @Transactional
+    override fun find(id: UUID): Board? = boardRepository.findByIdOrNull(id)
 
-    override fun addBoard(board: Board): Long {
-        val savedBoard = boardRepository.save(board)
+    override fun add(element: Board): UUID {
+        val savedBoard = boardRepository.save(element)
         return savedBoard.id
     }
 
-    override fun addBoard(board: Board, gueraBookId: Long): Long {
-        val gueraBook = guerabookRepository.findByIdOrNull(gueraBookId) ?: return 0L
+    override fun add(board: Board, gueraBookId: UUID): UUID {
+        val gueraBook = guerabookRepository.findByIdOrNull(gueraBookId) ?: return UUID(0, 0)
         board.guerabook = gueraBook
-        return addBoard(board)
+        return add(board)
     }
 
-    override fun modifyBoard(board: Board): Boolean {
-        if (!boardRepository.existsById(board.id)) return false
-        boardRepository.save(board)
+    @Transactional
+    override fun findAll(): List<Board> = boardRepository.findAll()
+
+    @Transactional
+    override fun findAllId(): List<String> = boardRepository.findAll().map { it.id.toString() }
+
+    override fun modify(element: Board): Boolean {
+        if (!boardRepository.existsById(element.id)) return false
+        boardRepository.save(element)
         return true
     }
 
-    override fun removeBoard(id: Long): Boolean {
+    override fun remove(id: UUID): Boolean {
         val exists = boardRepository.existsById(id)
         boardRepository.deleteById(id)
         return exists

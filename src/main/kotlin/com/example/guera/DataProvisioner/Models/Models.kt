@@ -14,6 +14,7 @@ import kotlin.reflect.jvm.javaField
 
 interface Identified {
     val id: UUID
+    fun clear()
 }
 
 @Entity
@@ -37,7 +38,7 @@ data class Guerabook(
             boards: [${boards.map { it.id.toString() }.fold("") { acc, s ->  "$acc, $s"}}]
     """.trimIndent()
 
-    fun clearBoards() {
+    override fun clear() {
         val field = this::class.declaredMemberProperties.find { it.javaField?.name == "boards" }!!.javaField
         field?.isAccessible = true
         field?.set(this@Guerabook, listOf<Guerabook>())!!
@@ -62,6 +63,8 @@ data class Board(
     private val checklists: List<Checklist> = listOf()
 ): Identified {
     fun getChecklists(): List<String> = mapToId(checklists)
+
+    override fun clear() {}
 
     override fun toString(): String = """
         type: Board
@@ -99,6 +102,8 @@ data class Checklist(
     } catch (e: LazyInitializationException) {
         listOf()
     }
+
+    override fun clear() {}
     override fun toString(): String = """
         type: Checklist
             id: $id
@@ -127,6 +132,7 @@ data class Task(
     @JsonIgnore
     var checklist: Checklist?
 ): Identified {
+    override fun clear() {}
     override fun toString(): String = """
         type: Task
             id: $id

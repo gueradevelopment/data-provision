@@ -1,4 +1,62 @@
 package com.example.guera.DataProvisioner.Controllers
 
-class BoardController {
+import com.example.guera.DataProvisioner.Exceptions.BadRequestException
+import com.example.guera.DataProvisioner.Exceptions.NotFoundException
+import com.example.guera.DataProvisioner.Extensions.asJsonNode
+import com.example.guera.DataProvisioner.Extensions.expectedProperties
+import com.example.guera.DataProvisioner.Extensions.toBean
+import com.example.guera.DataProvisioner.Interfaces.IBoardController
+import com.example.guera.DataProvisioner.Interfaces.IBoardService
+import com.example.guera.DataProvisioner.Models.Board
+import com.example.guera.DataProvisioner.Models.Success
+import com.fasterxml.jackson.databind.JsonNode
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Controller
+import java.lang.IllegalArgumentException
+import java.util.*
+
+@Controller
+class BoardController(
+    @Autowired private val boardService: IBoardService
+): IBoardController {
+
+    override fun create(json: JsonNode): String {
+        val board = json.toBean<Board>("title")
+        val id = boardService.add(board)
+        return Success(id.asJsonNode("id")).toString()
+    }
+
+    override fun retrieve(json: JsonNode): String {
+        if (!json.has("id")) throw BadRequestException(*Board::class.expectedProperties("id"))
+        val id = json["id"].textValue()
+        val uuid = try { UUID.fromString(id) } catch (e: IllegalArgumentException) { throw BadRequestException("id") }
+        val board = boardService.find(uuid)
+        board ?: throw NotFoundException("Board", id)
+        return Success(board).toString()
+    }
+
+    override fun retrieveAll(): String {
+        val boards = boardService.findAllId()
+        return Success(boards).toString()
+    }
+
+    override fun retrieveAllId(): String {
+        val idList = boardService.findAllId()
+        return Success(idList).toString()
+    }
+
+    override fun delete(json: JsonNode): String {
+        if (!json.has("id")) throw BadRequestException(*Board::class.expectedProperties("id"))
+        val id = json["id"].textValue()
+        val uuid = try { UUID.fromString(id) } catch (e: IllegalArgumentException) { throw BadRequestException("id") }
+        val success = boardService.remove(uuid)
+        return if (success) Success(null).toString() else Error("Deletion Failure").toString()
+    }
+
+    override fun update(json: JsonNode): String {
+        val guerabook = json.toBean<Board>("id")
+        boardService.modify(guerabook)
+        return Success(null).toString()
+    }
+
 }

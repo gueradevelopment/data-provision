@@ -4,6 +4,7 @@ import com.example.guera.DataProvisioner.Exceptions.BadRequestException
 import com.example.guera.DataProvisioner.Exceptions.NotFoundException
 import com.example.guera.DataProvisioner.Extensions.asJsonNode
 import com.example.guera.DataProvisioner.Extensions.expectedProperties
+import com.example.guera.DataProvisioner.Extensions.toBean
 import com.example.guera.DataProvisioner.Interfaces.IGuerabookController
 import com.example.guera.DataProvisioner.Models.Guerabook
 import com.example.guera.DataProvisioner.Models.Success
@@ -22,7 +23,7 @@ class GuerabookController(
 
 
     override fun create(json: JsonNode): String {
-        val guerabook = json.toGuerabook()
+        val guerabook = json.toBean<Guerabook>("title")
         val id = guerabookService.add(guerabook)
         return Success(id.asJsonNode("id")).toString()
     }
@@ -55,20 +56,9 @@ class GuerabookController(
     }
 
     override fun update(json: JsonNode): String {
-        val guerabook = json.toGuerabook()
+        val guerabook = json.toBean<Guerabook>("id")
         guerabookService.modify(guerabook)
         return Success(null).toString()
     }
 
-    private fun JsonNode.toGuerabook(): Guerabook {
-        val book = try {
-            ObjectMapper().treeToValue(this, Guerabook::class.java)!!
-        } catch (e: JsonProcessingException) {
-            e.printStackTrace()
-            val properties = Guerabook::class.expectedProperties("id")
-            throw BadRequestException(*properties)
-        }
-        book.clearBoards()
-        return book
-    }
 }

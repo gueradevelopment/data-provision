@@ -45,7 +45,7 @@ class TaskService(
 
     override fun remove(id: UUID): Boolean {
         val exists = taskRepository.existsById(id)
-        taskRepository.deleteById(id)
+        if (exists) taskRepository.deleteById(id)
         return exists
     }
 
@@ -53,7 +53,7 @@ class TaskService(
         val task = taskRepository.findByIdOrNull(id) ?: return null
         if (task.completionDate != null) return null
         task.completionDate = Date.from(Instant.now())
-        taskRepository.save(task)
+        modify(task)
         return task.completionDate
     }
 }

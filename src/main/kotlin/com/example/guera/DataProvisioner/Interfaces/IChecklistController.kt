@@ -1,5 +1,7 @@
 package com.example.guera.DataProvisioner.Interfaces
 
-import com.example.guera.DataProvisioner.Models.Checklist
+import com.fasterxml.jackson.databind.JsonNode
 
-interface IChecklistController : ICrudController
+interface IChecklistController : ICrudController {
+    fun markAsComplete(json: JsonNode): String
+}

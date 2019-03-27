@@ -4,10 +4,11 @@ import com.example.guera.DataProvisioner.Exceptions.BadRequestException
 import com.example.guera.DataProvisioner.Exceptions.NotFoundException
 import com.example.guera.DataProvisioner.Extensions.asJsonNode
 import com.example.guera.DataProvisioner.Extensions.expectedProperties
-import com.example.guera.DataProvisioner.Extensions.toBean
+import com.example.guera.DataProvisioner.Extensions.toModel
 import com.example.guera.DataProvisioner.Interfaces.IBoardController
 import com.example.guera.DataProvisioner.Interfaces.IBoardService
 import com.example.guera.DataProvisioner.Models.Board
+import com.example.guera.DataProvisioner.Models.Failure
 import com.example.guera.DataProvisioner.Models.Success
 import com.fasterxml.jackson.databind.JsonNode
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,8 +22,12 @@ class BoardController(
 ): IBoardController {
 
     override fun create(json: JsonNode): String {
-        val board = json.toBean<Board>("title")
-        val id = boardService.add(board)
+        val board = json.toModel<Board>("title")
+        val bookId = json["guerabookId"]
+        val id = if (bookId != null) {
+            val uuid = UUID.fromString(bookId.textValue())
+            boardService.add(board, uuid)
+        } else boardService.add(board)
         return Success(id.asJsonNode("id")).toString()
     }
 
@@ -36,7 +41,7 @@ class BoardController(
     }
 
     override fun retrieveAll(): String {
-        val boards = boardService.findAllId()
+        val boards = boardService.findAll()
         return Success(boards).toString()
     }
 
@@ -50,12 +55,12 @@ class BoardController(
         val id = json["id"].textValue()
         val uuid = try { UUID.fromString(id) } catch (e: IllegalArgumentException) { throw BadRequestException("id") }
         val success = boardService.remove(uuid)
-        return if (success) Success(null).toString() else Error("Deletion Failure").toString()
+        return if (success) Success(null).toString() else Failure("Deletion Failure").toString()
     }
 
     override fun update(json: JsonNode): String {
-        val guerabook = json.toBean<Board>("id")
-        boardService.modify(guerabook)
+        val board = json.toModel<Board>("id")
+        boardService.modify(board)
         return Success(null).toString()
     }
 

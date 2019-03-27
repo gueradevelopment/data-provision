@@ -1,6 +1,7 @@
 package com.example.guera.DataProvisioner.Services
 
 import com.example.guera.DataProvisioner.Interfaces.IChecklistService
+import com.example.guera.DataProvisioner.Interfaces.ITaskService
 import com.example.guera.DataProvisioner.Models.Checklist
 import com.example.guera.DataProvisioner.Repositories.IBoardRepository
 import com.example.guera.DataProvisioner.Repositories.IChecklistRepository
@@ -14,7 +15,8 @@ import java.util.*
 @Service("IChecklistService")
 class ChecklistService(
     @Autowired private val checklistRepository: IChecklistRepository,
-    @Autowired private val boardRepository: IBoardRepository
+    @Autowired private val boardRepository: IBoardRepository,
+    @Autowired private val taskService: ITaskService
 ) : IChecklistService {
 
     @Transactional
@@ -45,7 +47,7 @@ class ChecklistService(
 
     override fun remove(id: UUID): Boolean {
         val exists = checklistRepository.existsById(id)
-        checklistRepository.deleteById(id)
+        if (exists) checklistRepository.deleteById(id)
         return exists
     }
 
@@ -54,7 +56,8 @@ class ChecklistService(
         if (checklist.completionDate != null) return null
         val now = Date.from(Instant.now())
         checklist.completionDate = now
-        checklist.tasksProxy().forEach { if (it.completionDate != null) it.completionDate = now }
+        modify(checklist)
+        checklist.tasksProxy().forEach { taskService.markAsComplete(it.id) }
         return now
     }
 }

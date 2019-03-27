@@ -34,7 +34,7 @@ class GuerabookService(
 
     override fun remove(id: UUID): Boolean {
         val exists = guerabookRepository.existsById(id)
-        guerabookRepository.deleteById(id)
+        if (exists) guerabookRepository.deleteById(id)
         return exists
     }
 }

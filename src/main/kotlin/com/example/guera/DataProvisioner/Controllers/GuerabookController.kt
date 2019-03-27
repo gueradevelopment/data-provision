@@ -4,14 +4,13 @@ import com.example.guera.DataProvisioner.Exceptions.BadRequestException
 import com.example.guera.DataProvisioner.Exceptions.NotFoundException
 import com.example.guera.DataProvisioner.Extensions.asJsonNode
 import com.example.guera.DataProvisioner.Extensions.expectedProperties
-import com.example.guera.DataProvisioner.Extensions.toBean
+import com.example.guera.DataProvisioner.Extensions.toModel
 import com.example.guera.DataProvisioner.Interfaces.IGuerabookController
+import com.example.guera.DataProvisioner.Models.Failure
 import com.example.guera.DataProvisioner.Models.Guerabook
 import com.example.guera.DataProvisioner.Models.Success
 import com.example.guera.DataProvisioner.Services.GuerabookService
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import java.util.*
@@ -23,7 +22,7 @@ class GuerabookController(
 
 
     override fun create(json: JsonNode): String {
-        val guerabook = json.toBean<Guerabook>("title")
+        val guerabook = json.toModel<Guerabook>("title")
         val id = guerabookService.add(guerabook)
         return Success(id.asJsonNode("id")).toString()
     }
@@ -52,11 +51,11 @@ class GuerabookController(
         val id = json["id"].textValue()
         val uuid = try { UUID.fromString(id) } catch (e: IllegalArgumentException) { throw BadRequestException("id") }
         val success = guerabookService.remove(uuid)
-        return if (success) Success(null).toString() else Error("Deletion Failure").toString()
+        return if (success) Success(null).toString() else Failure("Deletion Failure").toString()
     }
 
     override fun update(json: JsonNode): String {
-        val guerabook = json.toBean<Guerabook>("id")
+        val guerabook = json.toModel<Guerabook>("id")
         guerabookService.modify(guerabook)
         return Success(null).toString()
     }

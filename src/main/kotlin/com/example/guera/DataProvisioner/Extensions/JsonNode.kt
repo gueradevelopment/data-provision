@@ -7,14 +7,14 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 
-inline fun <reified T: Identified> JsonNode.toBean(vararg fields: String): T {
-    val book = try {
+inline fun <reified T: Identified> JsonNode.toModel(vararg fields: String): T {
+    val model = try {
         ObjectMapper().treeToValue(this, T::class.java)!!
     } catch (e: JsonProcessingException) {
         e.printStackTrace()
-        val properties = Guerabook::class.expectedProperties(*fields)
+        val properties = T::class.expectedProperties(*fields)
         throw BadRequestException(*properties)
     }
-    book.clear()
-    return book
+    model.clear()
+    return model
 }

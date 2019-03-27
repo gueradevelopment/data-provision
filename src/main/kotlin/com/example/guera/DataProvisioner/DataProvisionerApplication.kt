@@ -37,7 +37,7 @@ class DataProvisionerApplication {
     @Bean
     fun binding(queue: Queue, topicExchange: TopicExchange) = BindingBuilder
         .bind(queue).to(topicExchange)
-        .with("guera.#")
+        .with("#")
 
     @Bean
     fun container(
@@ -56,7 +56,7 @@ class DataProvisionerApplication {
 fun main(args: Array<String>) {
     val context = runApplication<DataProvisionerApplication>(*args)
 
-    val boardService: IBoardService = context.getBean()
+    /*val boardService: IBoardService = context.getBean()
     val taskService: ITaskService = context.getBean()
     val checkService: IChecklistService = context.getBean()
 
@@ -71,6 +71,6 @@ fun main(args: Array<String>) {
     val gotCheck = checkService.find(checklistId)
     gotCheck?.let {
         val tasks = it.tasksProxy()
-        println(tasks[0].checklist)
-    }
+        println(tasks[0].checkl ist)
+    }*/
 }

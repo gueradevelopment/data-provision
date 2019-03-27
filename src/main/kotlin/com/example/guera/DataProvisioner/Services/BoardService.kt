@@ -43,7 +43,7 @@ class BoardService(
 
     override fun remove(id: UUID): Boolean {
         val exists = boardRepository.existsById(id)
-        boardRepository.deleteById(id)
+        if (exists) boardRepository.deleteById(id)
         return exists
     }
 }

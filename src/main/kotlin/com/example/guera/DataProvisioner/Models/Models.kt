@@ -19,6 +19,7 @@ interface Identified {
 
 @Entity
 @Table(name = "guerabook")
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Guerabook(
     @Id
     @Column(name = "id")
@@ -26,7 +27,7 @@ data class Guerabook(
     override val id: UUID = UUID.randomUUID(),
     @Column(name = "title")
     val title: String,
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "guerabook", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "guerabook", orphanRemoval = true)
     private val boards: List<Board> = listOf()
 ): Identified {
     fun getBoards(): List<String> = mapToId(boards)
@@ -48,6 +49,7 @@ data class Guerabook(
 
 @Entity
 @Table(name = "board")
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Board(
     @Id
     @Column(name = "id")
@@ -55,11 +57,11 @@ data class Board(
     override val id: UUID = UUID.randomUUID(),
     @Column(name = "title")
     val title: String,
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_guerabook")
     @JsonIgnore
     var guerabook: Guerabook?,
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "board", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "board", orphanRemoval = true)
     private val checklists: List<Checklist> = listOf()
 ): Identified {
     fun getChecklists(): List<String> = mapToId(checklists)
@@ -76,6 +78,7 @@ data class Board(
 
 @Entity
 @Table(name = "checklist")
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Checklist(
     @Id
     @Column(name = "id")
@@ -92,7 +95,7 @@ data class Checklist(
     @JoinColumn(name = "fk_board")
     @JsonIgnore
     var board: Board?,
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "checklist", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "checklist", orphanRemoval = true)
     private val tasks: List<Task> = listOf()
 ): Identified {
     fun getTasks(): List<String> = mapToId(tasks)
@@ -115,6 +118,7 @@ data class Checklist(
 
 @Entity
 @Table(name = "task")
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Task(
     @Id
     @Column(name = "id")

@@ -1,5 +1,7 @@
 package com.example.guera.DataProvisioner.Interfaces
 
-import com.example.guera.DataProvisioner.Models.Task
+import com.fasterxml.jackson.databind.JsonNode
 
-interface ITaskController : ICrudController
+interface ITaskController : ICrudController {
+    fun markAsComplete(json: JsonNode): String
+}

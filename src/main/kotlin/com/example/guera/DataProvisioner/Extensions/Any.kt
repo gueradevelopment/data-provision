@@ -2,6 +2,7 @@ package com.example.guera.DataProvisioner.Extensions
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.jvmErasure
@@ -14,3 +15,5 @@ fun <T: Any> KClass<T>.expectedProperties(vararg filter: String): Array<String> 
         .map { "${it.name}: ${it.returnType.jvmErasure.simpleName}" }
         .toTypedArray()
 }
+
+fun <T> Optional<T>.unwrap(): T? = orElse(null)

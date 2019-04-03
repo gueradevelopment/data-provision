@@ -1,7 +1,7 @@
 package com.example.guera.DataProvisioner.Repositories
 
 import com.example.guera.DataProvisioner.Models.Task
-import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.mongodb.repository.MongoRepository
 import java.util.*
 
-interface ITaskRepository : JpaRepository<Task, UUID>
+interface ITaskRepository : MongoRepository<Task, UUID>

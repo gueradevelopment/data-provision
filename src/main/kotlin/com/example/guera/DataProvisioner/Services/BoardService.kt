@@ -1,5 +1,6 @@
 package com.example.guera.DataProvisioner.Services
 
+import com.example.guera.DataProvisioner.Extensions.unwrap
 import com.example.guera.DataProvisioner.Interfaces.IBoardService
 import com.example.guera.DataProvisioner.Models.Board
 import com.example.guera.DataProvisioner.Repositories.IBoardRepository
@@ -16,7 +17,7 @@ class BoardService(
 ) : IBoardService {
 
     @Transactional
-    override fun find(id: UUID): Board? = boardRepository.findByIdOrNull(id)
+    override fun find(id: UUID): Board? = boardRepository.findById(id).unwrap()
 
     override fun add(element: Board): UUID {
         val savedBoard = boardRepository.save(element)
@@ -24,7 +25,7 @@ class BoardService(
     }
 
     override fun add(board: Board, gueraBookId: UUID): UUID {
-        val gueraBook = guerabookRepository.findByIdOrNull(gueraBookId) ?: return UUID(0, 0)
+        val gueraBook = guerabookRepository.findById(gueraBookId).unwrap() ?: return UUID(0, 0)
         board.guerabook = gueraBook
         return add(board)
     }

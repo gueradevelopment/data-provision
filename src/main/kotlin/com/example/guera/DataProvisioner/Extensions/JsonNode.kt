@@ -15,6 +15,5 @@ inline fun <reified T: Identified> JsonNode.toModel(vararg fields: String): T {
         val properties = T::class.expectedProperties(*fields)
         throw BadRequestException(*properties)
     }
-    model.clear()
     return model
 }

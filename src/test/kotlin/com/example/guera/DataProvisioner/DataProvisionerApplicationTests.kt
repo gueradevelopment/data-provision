@@ -1,6 +1,6 @@
 package com.example.guera.DataProvisioner
 
-import com.example.guera.DataProvisioner.Extensions.writeValueAsString
+
 import com.example.guera.DataProvisioner.Interfaces.IGuerabookService
 import com.example.guera.DataProvisioner.Interfaces.ITaskService
 import com.example.guera.DataProvisioner.Models.Board
@@ -11,19 +11,7 @@ import com.example.guera.DataProvisioner.Repositories.IBoardRepository
 import com.example.guera.DataProvisioner.Repositories.IChecklistRepository
 import com.example.guera.DataProvisioner.Repositories.IGuerabookRepository
 import com.example.guera.DataProvisioner.Repositories.ITaskRepository
-import com.example.guera.DataProvisioner.Services.ChecklistService
-import com.example.guera.DataProvisioner.Services.GuerabookService
-import com.example.guera.DataProvisioner.Services.TaskService
-import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter
-import org.h2.engine.Session
-import org.hibernate.Hibernate
-import org.hibernate.LazyInitializationException
-import org.hibernate.SessionFactory
-import org.hibernate.boot.internal.SessionFactoryBuilderImpl
-import org.hibernate.internal.SessionFactoryImpl
-
 import org.junit.Assert
 import org.junit.BeforeClass
 import org.junit.Test
@@ -32,11 +20,7 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.data.jpa.provider.HibernateUtils
-import org.springframework.data.repository.findByIdOrNull
-import org.springframework.orm.hibernate5.SessionFactoryUtils
 import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @RunWith(SpringRunner::class)
@@ -88,7 +72,7 @@ class DataProvisionerApplicationTests {
 		Assert.assertEquals("Do the laundry", task.title)
 
 		val gotCheck = checkRepo.findById(checklist.id).get()
-		val tasks = gotCheck.tasksProxy()
+		val tasks = gotCheck.tasks
 		println(tasks.size)
 	}
 

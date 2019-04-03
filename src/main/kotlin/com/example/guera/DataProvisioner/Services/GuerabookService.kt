@@ -1,5 +1,6 @@
 package com.example.guera.DataProvisioner.Services
 
+import com.example.guera.DataProvisioner.Extensions.unwrap
 import com.example.guera.DataProvisioner.Interfaces.IGuerabookService
 import com.example.guera.DataProvisioner.Models.Guerabook
 import com.example.guera.DataProvisioner.Repositories.IGuerabookRepository
@@ -14,7 +15,7 @@ class GuerabookService(
 ) : IGuerabookService {
 
     @Transactional
-    override fun find(id: UUID): Guerabook? = guerabookRepository.findByIdOrNull(id)
+    override fun find(id: UUID): Guerabook? = guerabookRepository.findById(id).unwrap()
 
     override fun add(element: Guerabook): UUID {
         val savedBook = guerabookRepository.save(element)

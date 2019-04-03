@@ -1,12 +1,12 @@
 package com.example.guera.DataProvisioner.Services
 
+import com.example.guera.DataProvisioner.Extensions.unwrap
 import com.example.guera.DataProvisioner.Interfaces.IChecklistService
 import com.example.guera.DataProvisioner.Interfaces.ITaskService
 import com.example.guera.DataProvisioner.Models.Checklist
 import com.example.guera.DataProvisioner.Repositories.IBoardRepository
 import com.example.guera.DataProvisioner.Repositories.IChecklistRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -20,7 +20,7 @@ class ChecklistService(
 ) : IChecklistService {
 
     @Transactional
-    override fun find(id: UUID): Checklist? = checklistRepository.findByIdOrNull(id)
+    override fun find(id: UUID): Checklist? = checklistRepository.findById(id).orElse(null)
 
     override fun add(checklist: Checklist): UUID {
         val savedChecklist = checklistRepository.save(checklist)
@@ -28,7 +28,7 @@ class ChecklistService(
     }
 
     override fun add(checklist: Checklist, boardId: UUID): UUID {
-        val board = boardRepository.findByIdOrNull(boardId) ?: return UUID(0, 0)
+        val board = boardRepository.findById(boardId).unwrap() ?: return UUID(0, 0)
         checklist.board = board
         return add(checklist)
     }
@@ -52,12 +52,12 @@ class ChecklistService(
     }
 
     override fun markAsComplete(id: UUID): Date? {
-        val checklist = checklistRepository.findByIdOrNull(id) ?: return null
+        val checklist = checklistRepository.findById(id).unwrap() ?: return null
         if (checklist.completionDate != null) return null
         val now = Date.from(Instant.now())
         checklist.completionDate = now
         modify(checklist)
-        checklist.tasksProxy().forEach { taskService.markAsComplete(it.id) }
+        checklist.tasks.forEach { taskService.markAsComplete(it.id) }
         return now
     }
 }

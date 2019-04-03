@@ -13,7 +13,6 @@ import com.example.guera.DataProvisioner.Repositories.IBoardRepository
 import com.example.guera.DataProvisioner.Repositories.IChecklistRepository
 import com.example.guera.DataProvisioner.Repositories.IGuerabookRepository
 import com.example.guera.DataProvisioner.Repositories.ITaskRepository
-import org.hibernate.LazyInitializationException
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.core.TopicExchange

@@ -11,31 +11,5 @@ import java.util.*
 
 @Service("IGuerabookService")
 class GuerabookService(
-    @Autowired private val guerabookRepository: IGuerabookRepository
-) : IGuerabookService {
-
-    @Transactional
-    override fun find(id: UUID): Guerabook? = guerabookRepository.findById(id).unwrap()
-
-    override fun add(element: Guerabook): UUID {
-        val savedBook = guerabookRepository.save(element)
-        println(savedBook)
-        return savedBook.id
-    }
-
-    override fun findAll(): List<Guerabook> = guerabookRepository.findAll()
-
-    override fun findAllId(): List<String> = guerabookRepository.findAll().map { it.id.toString() }
-
-    override fun modify(element: Guerabook): Boolean {
-        if (!guerabookRepository.existsById(element.id)) return false
-        guerabookRepository.save(element)
-        return true
-    }
-
-    override fun remove(id: UUID): Boolean {
-        val exists = guerabookRepository.existsById(id)
-        if (exists) guerabookRepository.deleteById(id)
-        return exists
-    }
-}
+    @Autowired guerabookRepository: IGuerabookRepository
+) : AbstractService<Guerabook>(guerabookRepository), IGuerabookService

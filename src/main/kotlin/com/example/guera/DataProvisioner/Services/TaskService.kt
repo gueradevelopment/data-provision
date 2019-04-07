@@ -13,44 +13,20 @@ import java.util.*
 
 @Service("ITaskService")
 class TaskService(
-    @Autowired private val taskRepository: ITaskRepository,
+    @Autowired taskRepository: ITaskRepository,
     @Autowired private val checklistRepository: IChecklistRepository
-) : ITaskService {
-
-    @Transactional
-    override fun find(id: UUID): Task? = taskRepository.findByIdOrNull(id)
-
-    override fun add(element: Task): UUID {
-        val savedTask = taskRepository.save(element)
-        return savedTask.id
-    }
+) : AbstractService<Task>(taskRepository), ITaskService {
 
     override fun add(task: Task, checklistId: UUID): UUID {
+        val id = add(task)
         val checklist = checklistRepository.findByIdOrNull(checklistId) ?: return UUID(0, 0)
-        task.checklist = checklist
-        return add(task)
-
-
-    }
-
-    override fun findAll(): List<Task> = taskRepository.findAll()
-
-    override fun findAllId(): List<String> = taskRepository.findAll().map { it.id.toString() }
-
-    override fun modify(element: Task): Boolean {
-        if (!taskRepository.existsById(element.id)) return false
-        taskRepository.save(element)
-        return true
-    }
-
-    override fun remove(id: UUID): Boolean {
-        val exists = taskRepository.existsById(id)
-        if (exists) taskRepository.deleteById(id)
-        return exists
+        checklist.tasks.add(task)
+        checklistRepository.save(checklist)
+        return id
     }
 
     override fun markAsComplete(id: UUID): Date? {
-        val task = taskRepository.findByIdOrNull(id) ?: return null
+        val task = find(id) ?: return null
         if (task.completionDate != null) return null
         task.completionDate = Date.from(Instant.now())
         modify(task)

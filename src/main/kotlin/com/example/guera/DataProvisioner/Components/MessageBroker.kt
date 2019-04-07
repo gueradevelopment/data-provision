@@ -1,15 +1,12 @@
 package com.example.guera.DataProvisioner.Components
 
-import com.example.guera.DataProvisioner.Controllers.ChecklistController
 import com.example.guera.DataProvisioner.Exceptions.DataProvisionException
 import com.example.guera.DataProvisioner.Exceptions.UnsupportedActionException
 import com.example.guera.DataProvisioner.Interfaces.IBoardController
 import com.example.guera.DataProvisioner.Interfaces.IChecklistController
 import com.example.guera.DataProvisioner.Interfaces.IGuerabookController
 import com.example.guera.DataProvisioner.Interfaces.ITaskController
-import com.example.guera.DataProvisioner.Models.Checklist
 import com.example.guera.DataProvisioner.Models.Failure
-
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.amqp.core.Message
@@ -17,9 +14,6 @@ import org.springframework.amqp.core.MessageListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-
-import khttp.post
-import java.lang.Exception
 
 @Component("MessageBroker")
 class MessageBroker(
@@ -101,27 +95,5 @@ class MessageBroker(
         "markComplete" -> checklistController.markAsComplete(json)
         else -> throw UnsupportedActionException(action, "Task")
     }
-
-/*    fun addChecklist(json: JsonNode): String {
-        val token = json["token"].toString()
-        return if (verifyAuth(token)) {
-            val checklist = Checklist(
-                title = json["title"].toString(),
-                description = json["description"].toString(),
-                board = null
-            )
-            //checklistService.addChecklist(checklist)
-            "Success"
-        } else {
-            "Failure"
-        }
-    }
-
-    fun verifyAuth(token: String): Boolean {
-        val response = post("localhost:8080/verify", data = mapOf(
-            "token" to token
-        ))
-        return response.statusCode == 200
-    }*/
 
 }

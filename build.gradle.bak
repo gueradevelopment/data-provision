@@ -8,19 +8,19 @@ buildscript {
 }
 
 plugins {
-	id 'org.jetbrains.kotlin.plugin.jpa' version "1.3.21"
-	id 'org.springframework.boot' version '2.1.3.RELEASE'
-	id 'org.jetbrains.kotlin.jvm' version "1.3.21"
-    id "org.jetbrains.kotlin.plugin.spring" version "1.3.21"
-	id "org.jetbrains.kotlin.plugin.allopen" version "1.3.21"
-	id "org.jetbrains.kotlin.plugin.noarg" version "1.3.21"
+	id 'org.jetbrains.kotlin.plugin.jpa' kotlinVersion "1.3.21"
+	id 'org.springframework.boot' kotlinVersion '2.1.3.RELEASE'
+	id 'org.jetbrains.kotlin.jvm' kotlinVersion "1.3.21"
+    id "org.jetbrains.kotlin.plugin.spring" kotlinVersion "1.3.21"
+	id "org.jetbrains.kotlin.plugin.allopen" kotlinVersion "1.3.21"
+	id "org.jetbrains.kotlin.plugin.noarg" kotlinVersion "1.3.21"
 }
 
 apply plugin: 'kotlin-jpa'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.example.guera'
-version = '0.0.1-SNAPSHOT'
+kotlinVersion = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 allOpen {
@@ -43,11 +43,11 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-	compile group: 'com.h2database', name: 'h2', version: '1.4.197'
+	compile group: 'com.h2database', name: 'h2', kotlinVersion: '1.4.197'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.8'
-	compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.8'
-    compile group: 'khttp', name: 'khttp', version: '0.1.0'
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', kotlinVersion: '2.9.8'
+	compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', kotlinVersion: '2.9.8'
+    compile group: 'khttp', name: 'khttp', kotlinVersion: '0.1.0'
 }
 
 compileKotlin {

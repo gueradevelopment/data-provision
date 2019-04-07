@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val version = "1.3.21"
-
 buildscript {
+    extra.set("kotlinVersion", "1.3.21")
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-noarg:$version")
-        classpath("org.jetbrains.kotlin:kotlin-allopen:$version")
-        classpath("org.jetbrains.kotlin:kotlin-noarg:$version")
+        val kotlinVersion: String by rootProject.extra
+        classpath("org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion")
     }
 }
 
@@ -40,7 +40,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    compile("com.github.fakemongo:fongo:2.1.0")
     api("com.fasterxml.jackson.core:jackson-core:2.9.8")
     api("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
     api("khttp:khttp:0.1.0")

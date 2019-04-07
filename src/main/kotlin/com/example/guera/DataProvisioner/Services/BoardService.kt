@@ -12,39 +12,15 @@ import java.util.*
 
 @Service("IBoardService")
 class BoardService(
-    @Autowired private val boardRepository: IBoardRepository,
+    @Autowired boardRepository: IBoardRepository,
     @Autowired private val guerabookRepository: IGuerabookRepository
-) : IBoardService {
-
-    @Transactional
-    override fun find(id: UUID): Board? = boardRepository.findById(id).unwrap()
-
-    override fun add(element: Board): UUID {
-        val savedBoard = boardRepository.save(element)
-        return savedBoard.id
-    }
+) : AbstractService<Board>(boardRepository), IBoardService {
 
     override fun add(board: Board, gueraBookId: UUID): UUID {
+        val id = add(board)
         val gueraBook = guerabookRepository.findById(gueraBookId).unwrap() ?: return UUID(0, 0)
-        board.guerabook = gueraBook
-        return add(board)
-    }
-
-    @Transactional
-    override fun findAll(): List<Board> = boardRepository.findAll()
-
-    @Transactional
-    override fun findAllId(): List<String> = boardRepository.findAll().map { it.id.toString() }
-
-    override fun modify(element: Board): Boolean {
-        if (!boardRepository.existsById(element.id)) return false
-        boardRepository.save(element)
-        return true
-    }
-
-    override fun remove(id: UUID): Boolean {
-        val exists = boardRepository.existsById(id)
-        if (exists) boardRepository.deleteById(id)
-        return exists
+        gueraBook.boards.add(board)
+        guerabookRepository.save(gueraBook)
+        return id
     }
 }

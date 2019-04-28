@@ -2,24 +2,11 @@ package com.example.guera.DataProvisioner
 
 
 import com.example.guera.DataProvisioner.Components.MessageBroker
-import com.example.guera.DataProvisioner.Interfaces.IBoardService
-import com.example.guera.DataProvisioner.Interfaces.IChecklistService
-import com.example.guera.DataProvisioner.Interfaces.ITaskService
-import com.example.guera.DataProvisioner.Models.Board
-import com.example.guera.DataProvisioner.Models.Checklist
-import com.example.guera.DataProvisioner.Models.Guerabook
-import com.example.guera.DataProvisioner.Models.Task
-import com.example.guera.DataProvisioner.Repositories.IBoardRepository
-import com.example.guera.DataProvisioner.Repositories.IChecklistRepository
-import com.example.guera.DataProvisioner.Repositories.IGuerabookRepository
-import com.example.guera.DataProvisioner.Repositories.ITaskRepository
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.core.TopicExchange
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
-import org.springframework.beans.factory.getBean
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean

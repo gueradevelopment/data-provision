@@ -29,6 +29,13 @@ class ChecklistService(
         return id
     }
 
+    override fun remove(id: UUID): Boolean {
+        val success = super.remove(id)
+        val childrenId = find(id)?.getTaskIds()
+        val childSuccess = childrenId?.map { taskService.remove(UUID.fromString(it)) }
+        return success && childSuccess?.fold(true) {prev, curr -> prev && curr} ?: true
+    }
+
     override fun markAsComplete(id: UUID): Date? {
         val checklist = find(id) ?: return null
         if (checklist.completionDate != null) return null

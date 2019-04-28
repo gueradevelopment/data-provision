@@ -56,10 +56,10 @@ class DataProvisionerApplicationTests {
 	fun basicStoring() {
 
 		val book = gueraBookRepo.save(Guerabook(title = "First book"))
-		val board = boardRepo.save(Board(title = "First Board", guerabook = book))
-		var checklist = checkRepo.save(Checklist(title = "Basic Checklist", description = "I am the Senate", board = board))
-		val task1 = Task(title = "Do the laundry", description = "", checklist = checklist)
-		val task2 = Task(title = "Invoke magic", description = "", checklist = checklist)
+		val board = boardRepo.save(Board(title = "First Board"))
+		var checklist = checkRepo.save(Checklist(title = "Basic Checklist", description = "I am the Senate"))
+		val task1 = Task(title = "Do the laundry", description = "")
+		val task2 = Task(title = "Invoke magic", description = "")
 
 		val id = taskRepo.save(task1).id
 		theId = book.id
@@ -68,7 +68,7 @@ class DataProvisionerApplicationTests {
 
 		val task = taskService.find(id) ?: throw Exception("Null lol")
 
-		Assert.assertEquals("I am the Senate", task.checklist?.description)
+		//Assert.assertEquals("I am the Senate", task.checklist?.description)
 		Assert.assertEquals("Do the laundry", task.title)
 
 		val gotCheck = checkRepo.findById(checklist.id).get()

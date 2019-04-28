@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageListener
+import org.springframework.amqp.core.MessagePostProcessor
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -25,8 +26,8 @@ class MessageBroker(
 ) : MessageListener {
 
     companion object {
-        const val queueName = "spring"
-        const val topicExchangeName = "spring-exchange"
+        const val queueName = "main"
+        const val topicExchangeName = "data-provision"
     }
 
     override fun onMessage(message: Message) {
@@ -39,7 +40,15 @@ class MessageBroker(
             e.cause?.printStackTrace() ?: e.printStackTrace()
             Failure("Internal Server Failure").toString()
         }
-        template.convertAndSend(message.messageProperties.replyTo, response)
+        println(message.messageProperties)
+        println("Replying to: ${message.messageProperties.replyTo}")
+
+        val postProcessor = MessagePostProcessor {
+            it.messageProperties.correlationId = message.messageProperties.correlationId
+            return@MessagePostProcessor it
+        }
+
+        template.convertAndSend("", message.messageProperties.replyTo, response, postProcessor)
     }
 
     private fun route(routingKey: String, message: String): String {

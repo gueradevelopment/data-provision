@@ -22,7 +22,7 @@ class GuerabookController(
 
 
     override fun create(json: JsonNode): String {
-        val guerabook = json.toModel<Guerabook>("title")
+        val guerabook = json.toModel<Guerabook>("title", "userId")
         val id = guerabookService.add(guerabook)
         return Success(id.asJsonNode("id")).toString()
     }
@@ -36,13 +36,13 @@ class GuerabookController(
         return Success(guerabook).toString()
     }
 
-    override fun retrieveAll(): String {
-        val books = guerabookService.findAll()
+    override fun retrieveAll(userId: String): String {
+        val books = guerabookService.findAll(userId)
         return Success(books).toString()
     }
 
-    override fun retrieveAllId(): String {
-        val idList = guerabookService.findAllId()
+    override fun retrieveAllId(userId: String): String {
+        val idList = guerabookService.findAllId(userId)
         return Success(idList).toString()
     }
 

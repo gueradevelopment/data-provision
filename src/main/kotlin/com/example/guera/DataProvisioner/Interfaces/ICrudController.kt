@@ -6,8 +6,8 @@ interface ICrudController {
 
     fun create(json: JsonNode): String
     fun retrieve(json: JsonNode): String
-    fun retrieveAll(): String
-    fun retrieveAllId(): String
+    fun retrieveAll(userId: String): String
+    fun retrieveAllId(userId: String): String
     fun delete(json: JsonNode): String
     fun update(json: JsonNode): String
 

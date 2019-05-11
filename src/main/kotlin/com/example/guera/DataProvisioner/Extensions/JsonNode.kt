@@ -9,9 +9,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 inline fun <reified T: Identified> JsonNode.toModel(vararg fields: String): T = try {
-    jacksonObjectMapper().treeToValue(this, T::class.java)!!
+    jacksonObjectMapper().treeToValue(this, T::class.java)
 } catch (e: JsonProcessingException) {
     e.printStackTrace()
     val properties = T::class.expectedProperties(*fields)
     throw BadRequestException(*properties)
 }
+
+
+inline val JsonNode.userId: String
+    get() = if (this.has("userId")) this["userId"].textValue() else throw BadRequestException("userId")

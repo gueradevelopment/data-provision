@@ -23,7 +23,7 @@ class TaskController(
 ): ITaskController {
 
     override fun create(json: JsonNode): String {
-        val board = json.toModel<Task>("title")
+        val board = json.toModel<Task>("title", "userId")
         val checklistId = json["checklistId"]
         val id = if (checklistId != null) {
             val uuid = UUID.fromString(checklistId.textValue())
@@ -40,13 +40,13 @@ class TaskController(
         board ?: throw NotFoundException("Board", id)
         return Success(board).toString()    }
 
-    override fun retrieveAll(): String {
-        val tasks = taskService.findAll()
+    override fun retrieveAll(userId: String): String {
+        val tasks = taskService.findAll(userId)
         return Success(tasks).toString()
     }
 
-    override fun retrieveAllId(): String {
-        val idList = taskService.findAllId()
+    override fun retrieveAllId(userId: String): String {
+        val idList = taskService.findAllId(userId)
         return Success(idList).toString()
     }
 

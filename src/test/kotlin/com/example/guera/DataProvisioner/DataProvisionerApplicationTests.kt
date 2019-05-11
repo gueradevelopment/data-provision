@@ -55,11 +55,13 @@ class DataProvisionerApplicationTests {
 	@Test
 	fun basicStoring() {
 
-		val book = gueraBookRepo.save(Guerabook(title = "First book"))
-		val board = boardRepo.save(Board(title = "First Board"))
-		var checklist = checkRepo.save(Checklist(title = "Basic Checklist", description = "I am the Senate"))
-		val task1 = Task(title = "Do the laundry", description = "")
-		val task2 = Task(title = "Invoke magic", description = "")
+		val userId = UUID.randomUUID()
+
+		val book = gueraBookRepo.save(Guerabook(userId = userId, title = "First book"))
+		val board = boardRepo.save(Board(userId = userId, title = "First Board"))
+		var checklist = checkRepo.save(Checklist(userId = userId, title = "Basic Checklist", description = "I am the Senate"))
+		val task1 = Task(userId = userId, title = "Do the laundry", description = "")
+		val task2 = Task(userId = userId, title = "Invoke magic", description = "")
 
 		val id = taskRepo.save(task1).id
 		theId = book.id

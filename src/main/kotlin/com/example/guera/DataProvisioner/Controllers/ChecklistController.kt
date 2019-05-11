@@ -23,7 +23,7 @@ class ChecklistController(
 ): IChecklistController {
 
     override fun create(json: JsonNode): String {
-        val checklist = json.toModel<Checklist>("title")
+        val checklist = json.toModel<Checklist>("title", "userId")
         val bookId = json["boardId"]
         val id = if (bookId != null) {
             val uuid = UUID.fromString(bookId.textValue())
@@ -41,13 +41,13 @@ class ChecklistController(
         return Success(checklist).toString()
     }
 
-    override fun retrieveAll(): String {
-        val checklists = checklistService.findAll()
+    override fun retrieveAll(userId: String): String {
+        val checklists = checklistService.findAll(userId)
         return Success(checklists).toString()
     }
 
-    override fun retrieveAllId(): String {
-        val idList = checklistService.findAllId()
+    override fun retrieveAllId(userId: String): String {
+        val idList = checklistService.findAllId(userId)
         return Success(idList).toString()
     }
 

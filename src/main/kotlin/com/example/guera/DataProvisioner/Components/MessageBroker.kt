@@ -2,6 +2,7 @@ package com.example.guera.DataProvisioner.Components
 
 import com.example.guera.DataProvisioner.Exceptions.DataProvisionException
 import com.example.guera.DataProvisioner.Exceptions.UnsupportedActionException
+import com.example.guera.DataProvisioner.Extensions.userId
 import com.example.guera.DataProvisioner.Interfaces.IBoardController
 import com.example.guera.DataProvisioner.Interfaces.IChecklistController
 import com.example.guera.DataProvisioner.Interfaces.IGuerabookController
@@ -68,8 +69,8 @@ class MessageBroker(
         "retrieve" -> guerabookController.retrieve(json)
         "update" -> guerabookController.update(json)
         "delete" -> guerabookController.delete(json)
-        "retrieveAll" -> guerabookController.retrieveAll()
-        "retrieveAllId" -> guerabookController.retrieveAllId()
+        "retrieveAll" -> guerabookController.retrieveAll(json.userId)
+        "retrieveAllId" -> guerabookController.retrieveAllId(json.userId)
         else -> throw UnsupportedActionException(action, "Guerabook")
     }
 
@@ -78,8 +79,8 @@ class MessageBroker(
         "retrieve" -> boardController.retrieve(json)
         "update" -> boardController.update(json)
         "delete" -> boardController.delete(json)
-        "retrieveAll" -> boardController.retrieveAll()
-        "retrieveAllId" -> boardController.retrieveAllId()
+        "retrieveAll" -> boardController.retrieveAll(json.userId)
+        "retrieveAllId" -> boardController.retrieveAllId(json.userId)
         else -> throw UnsupportedActionException(action, "Board")
     }
 
@@ -88,8 +89,8 @@ class MessageBroker(
         "retrieve" -> checklistController.retrieve(json)
         "update" -> checklistController.update(json)
         "delete" -> checklistController.delete(json)
-        "retrieveAll" -> checklistController.retrieveAll()
-        "retrieveAllId" -> checklistController.retrieveAllId()
+        "retrieveAll" -> checklistController.retrieveAll(json.userId)
+        "retrieveAllId" -> checklistController.retrieveAllId(json.userId)
         "markComplete" -> checklistController.markAsComplete(json)
         else -> throw UnsupportedActionException(action, "Checklist")
     }
@@ -99,8 +100,8 @@ class MessageBroker(
         "retrieve" -> taskController.retrieve(json)
         "update" -> taskController.update(json)
         "delete" -> taskController.delete(json)
-        "retrieveAll" -> taskController.retrieveAll()
-        "retrieveAllId" -> taskController.retrieveAllId()
+        "retrieveAll" -> taskController.retrieveAll(json.userId)
+        "retrieveAllId" -> taskController.retrieveAllId(json.userId)
         "markComplete" -> checklistController.markAsComplete(json)
         else -> throw UnsupportedActionException(action, "Task")
     }

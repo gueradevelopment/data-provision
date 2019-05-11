@@ -10,12 +10,14 @@ import java.util.*
 
 interface Identified {
     val id: UUID
+    val userId: String
 }
 
 @Document(collection = "guerabook")
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Guerabook(
     @Id override val id: UUID = UUID.randomUUID(),
+    override val userId: String,
     val title: String,
     @DBRef @JsonIgnore val boards: MutableSet<Board> = mutableSetOf()
 ): Identified {
@@ -35,6 +37,7 @@ data class Guerabook(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Board(
     @Id override val id: UUID = UUID.randomUUID(),
+    override val userId: String,
     val title: String,
     @DBRef @JsonIgnore val checklists: MutableSet<Checklist> = mutableSetOf()
 ): Identified {
@@ -54,6 +57,7 @@ data class Board(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Checklist(
     @Id override val id: UUID = UUID.randomUUID(),
+    override val userId: String,
     val title: String,
     val description: String,
     var completionDate: Date? = null,
@@ -76,6 +80,7 @@ data class Checklist(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Task(
     @Id override val id: UUID = UUID.randomUUID(),
+    override val userId: String,
     val title: String,
     val description: String,
     var completionDate: Date? = null
@@ -90,6 +95,28 @@ data class Task(
     """.trimIndent()
 }
 
+@Document(collection = "guerateam")
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class Guerateam(
+    @Id override val id: UUID = UUID.randomUUID(),
+    override val userId: String,
+    val name: String,
+    val description: String,
+    val ownerId: String,
+    val membersId: List<String>
+): Identified {
+
+    override fun toString(): String = """
+        type: Guerateam
+            id: $id
+            name: $name
+            description: $description
+            ownerId: $ownerId
+            membersId: $membersId
+    """.trimIndent()
+
+}
+
 fun <T : Identified> Set<T>.mapToId(): String = this
     .map { it.id.toString() }
-    .fold("") { acc, s ->  "$acc, $s"}
+    .fold("") { prev, curr ->  "$prev, $curr"}

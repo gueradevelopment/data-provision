@@ -41,13 +41,13 @@ class TaskController(
         return Success(board).toString()
     }
 
-    override fun retrieveAll(userId: String): String {
-        val tasks = taskService.findAll(userId)
+    override fun retrieveAll(userId: String, isTeamContext: Boolean): String {
+        val tasks = taskService.findAll(userId, isTeamContext)
         return Success(tasks).toString()
     }
 
-    override fun retrieveAllId(userId: String): String {
-        val idList = taskService.findAllId(userId)
+    override fun retrieveAllId(userId: String, isTeamContext: Boolean): String {
+        val idList = taskService.findAllId(userId, isTeamContext)
         return Success(idList).toString()
     }
 

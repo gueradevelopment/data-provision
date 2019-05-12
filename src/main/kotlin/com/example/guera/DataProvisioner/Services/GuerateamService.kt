@@ -11,8 +11,8 @@ class GuerateamService(
     @Autowired private val guerateamRepository: IGuerateamRepository
 ) : AbstractService<Guerateam>(guerateamRepository), IGuerateamService {
 
-    override fun findAll(userId: String): List<Guerateam> = guerateamRepository.findAll().filter {
-        userId == it.ownerId || userId in it.membersId
-    }
+    override fun findAll(userId: String, isTeamContext: Boolean): List<Guerateam> = guerateamRepository.findAll()
+        .filter { userId == it.ownerId || userId in it.membersId }
+        .filter { it.isTeamContext == isTeamContext }
 
 }

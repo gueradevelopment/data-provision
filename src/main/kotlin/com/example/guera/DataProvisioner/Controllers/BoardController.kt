@@ -22,7 +22,7 @@ class BoardController(
 ): IBoardController {
 
     override fun create(json: JsonNode): String {
-        val board = json.toModel<Board>("title", "userId")
+        val board = json.toModel<Board>("title", "userId", "isTeamContext")
         val bookId = json["guerabookId"]
         val id = if (bookId != null) {
             val uuid = UUID.fromString(bookId.textValue())
@@ -40,13 +40,13 @@ class BoardController(
         return Success(board).toString()
     }
 
-    override fun retrieveAll(userId: String): String {
-        val boards = boardService.findAll(userId)
+    override fun retrieveAll(userId: String, isTeamContext: Boolean): String {
+        val boards = boardService.findAll(userId, isTeamContext)
         return Success(boards).toString()
     }
 
-    override fun retrieveAllId(userId: String): String {
-        val idList = boardService.findAllId(userId)
+    override fun retrieveAllId(userId: String, isTeamContext: Boolean): String {
+        val idList = boardService.findAllId(userId, isTeamContext)
         return Success(idList).toString()
     }
 

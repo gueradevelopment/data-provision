@@ -16,6 +16,13 @@ inline fun <reified T: Identified> JsonNode.toModel(vararg fields: String): T = 
     throw BadRequestException(*properties)
 }
 
+inline fun <T> JsonNode.property(name: String, cast: (JsonNode) -> T): T {
+    val prop = if (this.has(name)) this[name] else throw BadRequestException(name)
+    return cast(prop)
+}
 
 inline val JsonNode.userId: String
-    get() = if (this.has("userId")) this["userId"].textValue() else throw BadRequestException("userId")
+    get() = property("userId") { it.textValue() }
+
+inline val JsonNode.isTeamContext: Boolean
+    get() = property("isTeamContext") { it.booleanValue() }

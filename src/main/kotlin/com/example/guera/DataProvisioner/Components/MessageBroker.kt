@@ -2,6 +2,7 @@ package com.example.guera.DataProvisioner.Components
 
 import com.example.guera.DataProvisioner.Exceptions.DataProvisionException
 import com.example.guera.DataProvisioner.Exceptions.UnsupportedActionException
+import com.example.guera.DataProvisioner.Extensions.isTeamContext
 import com.example.guera.DataProvisioner.Extensions.userId
 import com.example.guera.DataProvisioner.Interfaces.IBoardController
 import com.example.guera.DataProvisioner.Interfaces.IChecklistController
@@ -10,12 +11,14 @@ import com.example.guera.DataProvisioner.Interfaces.ITaskController
 import com.example.guera.DataProvisioner.Models.Failure
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageListener
 import org.springframework.amqp.core.MessagePostProcessor
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import javax.management.ObjectName
 
 @Component("MessageBroker")
 class MessageBroker(
@@ -53,8 +56,9 @@ class MessageBroker(
     }
 
     private fun route(routingKey: String, message: String): String {
-        val (resource, action) = routingKey.split(".")
+        val (context, resource, action) = routingKey.split(".")
         val json = ObjectMapper().readTree(message)
+        (json as ObjectNode).put("isTeamContext", context.toBoolean())
         return when (resource) {
             "guerabook" -> bookRoute(action, json)
             "board" -> boardRoute(action, json)
@@ -69,8 +73,8 @@ class MessageBroker(
         "retrieve" -> guerabookController.retrieve(json)
         "update" -> guerabookController.update(json)
         "delete" -> guerabookController.delete(json)
-        "retrieveAll" -> guerabookController.retrieveAll(json.userId)
-        "retrieveAllId" -> guerabookController.retrieveAllId(json.userId)
+        "retrieveAll" -> guerabookController.retrieveAll(json.userId, json.isTeamContext)
+        "retrieveAllId" -> guerabookController.retrieveAllId(json.userId, json.isTeamContext)
         else -> throw UnsupportedActionException(action, "Guerabook")
     }
 
@@ -79,8 +83,8 @@ class MessageBroker(
         "retrieve" -> boardController.retrieve(json)
         "update" -> boardController.update(json)
         "delete" -> boardController.delete(json)
-        "retrieveAll" -> boardController.retrieveAll(json.userId)
-        "retrieveAllId" -> boardController.retrieveAllId(json.userId)
+        "retrieveAll" -> boardController.retrieveAll(json.userId, json.isTeamContext)
+        "retrieveAllId" -> boardController.retrieveAllId(json.userId, json.isTeamContext)
         else -> throw UnsupportedActionException(action, "Board")
     }
 
@@ -89,8 +93,8 @@ class MessageBroker(
         "retrieve" -> checklistController.retrieve(json)
         "update" -> checklistController.update(json)
         "delete" -> checklistController.delete(json)
-        "retrieveAll" -> checklistController.retrieveAll(json.userId)
-        "retrieveAllId" -> checklistController.retrieveAllId(json.userId)
+        "retrieveAll" -> checklistController.retrieveAll(json.userId, json.isTeamContext)
+        "retrieveAllId" -> checklistController.retrieveAllId(json.userId, json.isTeamContext)
         "markComplete" -> checklistController.markAsComplete(json)
         else -> throw UnsupportedActionException(action, "Checklist")
     }
@@ -100,8 +104,8 @@ class MessageBroker(
         "retrieve" -> taskController.retrieve(json)
         "update" -> taskController.update(json)
         "delete" -> taskController.delete(json)
-        "retrieveAll" -> taskController.retrieveAll(json.userId)
-        "retrieveAllId" -> taskController.retrieveAllId(json.userId)
+        "retrieveAll" -> taskController.retrieveAll(json.userId, json.isTeamContext)
+        "retrieveAllId" -> taskController.retrieveAllId(json.userId, json.isTeamContext)
         "markComplete" -> checklistController.markAsComplete(json)
         else -> throw UnsupportedActionException(action, "Task")
     }

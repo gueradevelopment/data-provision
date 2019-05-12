@@ -55,7 +55,7 @@ class DataProvisionerApplicationTests {
 	@Test
 	fun basicStoring() {
 
-		val userId = UUID.randomUUID()
+		val userId = UUID.randomUUID().toString()
 
 		val book = gueraBookRepo.save(Guerabook(userId = userId, title = "First book"))
 		val board = boardRepo.save(Board(userId = userId, title = "First Board"))

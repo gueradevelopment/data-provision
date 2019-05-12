@@ -41,13 +41,13 @@ class ChecklistController(
         return Success(checklist).toString()
     }
 
-    override fun retrieveAll(userId: String): String {
-        val checklists = checklistService.findAll(userId)
+    override fun retrieveAll(userId: String, isTeamContext: Boolean): String {
+        val checklists = checklistService.findAll(userId, isTeamContext)
         return Success(checklists).toString()
     }
 
-    override fun retrieveAllId(userId: String): String {
-        val idList = checklistService.findAllId(userId)
+    override fun retrieveAllId(userId: String, isTeamContext: Boolean): String {
+        val idList = checklistService.findAllId(userId, isTeamContext)
         return Success(idList).toString()
     }
 

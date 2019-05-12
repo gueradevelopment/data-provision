@@ -36,13 +36,13 @@ class GuerabookController(
         return Success(guerabook).toString()
     }
 
-    override fun retrieveAll(userId: String): String {
-        val books = guerabookService.findAll(userId)
+    override fun retrieveAll(userId: String, isTeamContext: Boolean): String {
+        val books = guerabookService.findAll(userId, isTeamContext)
         return Success(books).toString()
     }
 
-    override fun retrieveAllId(userId: String): String {
-        val idList = guerabookService.findAllId(userId)
+    override fun retrieveAllId(userId: String, isTeamContext: Boolean): String {
+        val idList = guerabookService.findAllId(userId, isTeamContext)
         return Success(idList).toString()
     }
 

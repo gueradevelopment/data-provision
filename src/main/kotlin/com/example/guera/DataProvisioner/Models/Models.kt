@@ -11,6 +11,7 @@ import java.util.*
 interface Identified {
     val id: UUID
     val userId: String
+    val isTeamContext: Boolean
 }
 
 @Document(collection = "guerabook")
@@ -18,6 +19,7 @@ interface Identified {
 data class Guerabook(
     @Id override val id: UUID = UUID.randomUUID(),
     override val userId: String,
+    override val isTeamContext: Boolean = false,
     val title: String,
     @DBRef @JsonIgnore val boards: MutableSet<Board> = mutableSetOf()
 ): Identified {
@@ -38,6 +40,7 @@ data class Guerabook(
 data class Board(
     @Id override val id: UUID = UUID.randomUUID(),
     override val userId: String,
+    override val isTeamContext: Boolean = false,
     val title: String,
     @DBRef @JsonIgnore val checklists: MutableSet<Checklist> = mutableSetOf()
 ): Identified {
@@ -58,6 +61,7 @@ data class Board(
 data class Checklist(
     @Id override val id: UUID = UUID.randomUUID(),
     override val userId: String,
+    override val isTeamContext: Boolean = false,
     val title: String,
     val description: String,
     var completionDate: Date? = null,
@@ -81,6 +85,8 @@ data class Checklist(
 data class Task(
     @Id override val id: UUID = UUID.randomUUID(),
     override val userId: String,
+    override val isTeamContext: Boolean = false,
+
     val title: String,
     val description: String,
     var completionDate: Date? = null
@@ -100,6 +106,7 @@ data class Task(
 data class Guerateam(
     @Id override val id: UUID = UUID.randomUUID(),
     override val userId: String,
+    override val isTeamContext: Boolean = true,
     val name: String,
     val description: String,
     val ownerId: String,

@@ -11,9 +11,12 @@ abstract class AbstractService<T : Identified>(
 
     override fun find(id: UUID): T? = repository.findById(id).orElse(null)
 
-    override fun findAll(userId: String): List<T> = repository.findAll().filter { it.userId == userId }
+    override fun findAll(userId: String, isTeamContext: Boolean): List<T> = repository.findAll()
+        .filter { it.userId == userId }
+        .filter { it.isTeamContext == isTeamContext }
 
-    override fun findAllId(userId: String): List<String> = findAll(userId).map { it.id.toString() }
+    override fun findAllId(userId: String, isTeamContext: Boolean): List<String> = findAll(userId, isTeamContext)
+        .map { it.id.toString() }
 
     override fun add(element: T): UUID {
         val savedElement = repository.save(element)

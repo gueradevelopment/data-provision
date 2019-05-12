@@ -103,7 +103,7 @@ data class Guerateam(
     val name: String,
     val description: String,
     val ownerId: String,
-    val membersId: List<String>
+    val membersId: Set<String> = setOf()
 ): Identified {
 
     override fun toString(): String = """

@@ -5,12 +5,10 @@ import com.example.guera.DataProvisioner.Exceptions.NotFoundException
 import com.example.guera.DataProvisioner.Extensions.asJsonNode
 import com.example.guera.DataProvisioner.Extensions.expectedProperties
 import com.example.guera.DataProvisioner.Extensions.toModel
+import com.example.guera.DataProvisioner.Extensions.toUUID
 import com.example.guera.DataProvisioner.Interfaces.IGuerateamController
 import com.example.guera.DataProvisioner.Interfaces.IGuerateamService
-import com.example.guera.DataProvisioner.Models.Failure
-import com.example.guera.DataProvisioner.Models.Guerateam
-import com.example.guera.DataProvisioner.Models.Success
-import com.example.guera.DataProvisioner.Models.Task
+import com.example.guera.DataProvisioner.Models.*
 import com.fasterxml.jackson.databind.JsonNode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -59,5 +57,22 @@ class GuerateamController(
         val team = json.toModel<Guerateam>()
         guerateamService.modify(team)
         return Success(null).toString()
+    }
+
+    override fun subscribe(json: JsonNode): String = changeSubscription(json, true)
+
+    override fun unsubscribe(json: JsonNode): String = changeSubscription(json, false)
+
+    private fun changeSubscription(json: JsonNode, subscribe: Boolean): String {
+        if (!json.has("id") || !json.has("userId"))
+            throw BadRequestException(*Guerateam::class.expectedProperties("id", "userId"))
+        val id = json["id"].textValue().toUUID()
+        val userId = json["userId"].textValue()
+        val team = guerateamService.find(id) ?: throw NotFoundException("Guerateam", id.toString())
+        val members = if (subscribe) team.membersId + userId else team.membersId - userId
+        val updated = team.copy(membersId = members)
+        val success = guerateamService.modify(updated)
+        val message = if (subscribe) "Subscription" else "Unsubscription"
+        return if (success) Success(null).toString() else Failure("$message Failure").toString()
     }
 }

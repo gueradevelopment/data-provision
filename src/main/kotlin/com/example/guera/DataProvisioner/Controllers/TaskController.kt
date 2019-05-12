@@ -38,7 +38,8 @@ class TaskController(
         val uuid = try { UUID.fromString(id) } catch (e: IllegalArgumentException) { throw BadRequestException("id") }
         val board = taskService.find(uuid)
         board ?: throw NotFoundException("Board", id)
-        return Success(board).toString()    }
+        return Success(board).toString()
+    }
 
     override fun retrieveAll(userId: String): String {
         val tasks = taskService.findAll(userId)

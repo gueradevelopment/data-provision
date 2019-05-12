@@ -1,0 +1,3 @@
+package com.example.guera.DataProvisioner.Interfaces
+
+interface IGuerateamController: ICrudController

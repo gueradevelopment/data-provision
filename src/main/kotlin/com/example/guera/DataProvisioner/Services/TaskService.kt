@@ -27,7 +27,6 @@ class TaskService(
 
     override fun markAsComplete(id: UUID): Date? {
         val task = find(id) ?: return null
-        if (task.completionDate != null) return null
         task.completionDate = Date.from(Instant.now())
         modify(task)
         return task.completionDate

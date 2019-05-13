@@ -35,13 +35,13 @@ class GuerateamController(
         return Success(team).toString()
     }
 
-    override fun retrieveAll(userId: String): String {
-        val teams = guerateamService.findAll(userId)
+    override fun retrieveAll(userId: String, isTeamContext: Boolean): String {
+        val teams = guerateamService.findAll(userId, isTeamContext)
         return Success(teams).toString()
     }
 
-    override fun retrieveAllId(userId: String): String {
-        val idList = guerateamService.findAllId(userId)
+    override fun retrieveAllId(userId: String, isTeamContext: Boolean): String {
+        val idList = guerateamService.findAllId(userId, isTeamContext)
         return Success(idList).toString()
     }
 

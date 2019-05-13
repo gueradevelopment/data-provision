@@ -4,10 +4,7 @@ import com.example.guera.DataProvisioner.Exceptions.DataProvisionException
 import com.example.guera.DataProvisioner.Exceptions.UnsupportedActionException
 import com.example.guera.DataProvisioner.Extensions.isTeamContext
 import com.example.guera.DataProvisioner.Extensions.userId
-import com.example.guera.DataProvisioner.Interfaces.IBoardController
-import com.example.guera.DataProvisioner.Interfaces.IChecklistController
-import com.example.guera.DataProvisioner.Interfaces.IGuerabookController
-import com.example.guera.DataProvisioner.Interfaces.ITaskController
+import com.example.guera.DataProvisioner.Interfaces.*
 import com.example.guera.DataProvisioner.Models.Failure
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -18,7 +15,6 @@ import org.springframework.amqp.core.MessagePostProcessor
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import javax.management.ObjectName
 
 @Component("MessageBroker")
 class MessageBroker(
@@ -26,7 +22,8 @@ class MessageBroker(
     @Autowired private val guerabookController: IGuerabookController,
     @Autowired private val boardController: IBoardController,
     @Autowired private val checklistController: IChecklistController,
-    @Autowired private val taskController: ITaskController
+    @Autowired private val taskController: ITaskController,
+    @Autowired private val guerateamController: IGuerateamController
 ) : MessageListener {
 
     companion object {
@@ -40,6 +37,8 @@ class MessageBroker(
             route(message.messageProperties.receivedRoutingKey, payload)
         } catch (e: DataProvisionException) {
             Failure(e.message ?: "Error").toString()
+        } catch (e: IndexOutOfBoundsException) {
+            Failure("Incorrect routing key format. Should be <type>.<object>.<action>").toString()
         } catch (e: Exception) {
             e.cause?.printStackTrace() ?: e.printStackTrace()
             Failure("Internal Server Failure").toString()
@@ -64,6 +63,7 @@ class MessageBroker(
             "board" -> boardRoute(action, json)
             "checklist" -> checklistRoute(action, json)
             "task" -> taskRoute(action, json)
+            "guerateam" -> teamRoute(action, json)
             else -> throw UnsupportedActionException(action, resource)
         }
     }
@@ -108,6 +108,18 @@ class MessageBroker(
         "retrieveAllId" -> taskController.retrieveAllId(json.userId, json.isTeamContext)
         "markComplete" -> checklistController.markAsComplete(json)
         else -> throw UnsupportedActionException(action, "Task")
+    }
+
+    private fun teamRoute(action: String, json: JsonNode): String = when(action) {
+        "create" -> guerateamController.create(json)
+        "retrieve" -> guerateamController.retrieve(json)
+        "update" -> guerateamController.update(json)
+        "delete" -> guerateamController.delete(json)
+        "retrieveAll" -> guerateamController.retrieveAll(json.userId, json.isTeamContext)
+        "retrieveAllId" -> guerateamController.retrieveAllId(json.userId, json.isTeamContext)
+        "subscribe" -> guerateamController.subscribe(json)
+        "unsubscribe" -> guerateamController.unsubscribe(json)
+        else -> throw UnsupportedActionException(action, "Guerateam")
     }
 
 }

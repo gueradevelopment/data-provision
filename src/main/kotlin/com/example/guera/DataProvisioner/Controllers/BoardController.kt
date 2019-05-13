@@ -60,8 +60,8 @@ class BoardController(
 
     override fun update(json: JsonNode): String {
         val board = json.toModel<Board>("id")
-        boardService.modify(board)
-        return Success(null).toString()
+        val success = boardService.modify(board)
+        return if (success) Success(null).toString() else throw NotFoundException("Board", board.id.toString())
     }
 
 }

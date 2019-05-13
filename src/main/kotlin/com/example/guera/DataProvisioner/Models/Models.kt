@@ -6,12 +6,19 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
+import java.time.Instant
 import java.util.*
 
 interface Identified {
     val id: UUID
     val userId: String
     val isTeamContext: Boolean
+}
+
+enum class CompletionState {
+    Todo,
+    Doing,
+    Done
 }
 
 @Document(collection = "guerabook")
@@ -64,7 +71,8 @@ data class Checklist(
     override val isTeamContext: Boolean = false,
     val title: String,
     val description: String,
-    var completionDate: Date? = null,
+    var completionDate: Date = Date.from(Instant.now()),
+    val completionState: CompletionState = CompletionState.Todo,
     @DBRef @JsonIgnore val tasks: MutableSet<Task> = mutableSetOf()
 ): Identified {
 
@@ -86,10 +94,10 @@ data class Task(
     @Id override val id: UUID = UUID.randomUUID(),
     override val userId: String,
     override val isTeamContext: Boolean = false,
-
     val title: String,
     val description: String,
-    var completionDate: Date? = null
+    var completionDate: Date = Date.from(Instant.now()),
+    val completionState: CompletionState = CompletionState.Todo
 ): Identified {
 
     override fun toString(): String = """

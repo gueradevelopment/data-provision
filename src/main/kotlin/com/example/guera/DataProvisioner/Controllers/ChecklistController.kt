@@ -23,7 +23,7 @@ class ChecklistController(
 ): IChecklistController {
 
     override fun create(json: JsonNode): String {
-        val checklist = json.toModel<Checklist>("title", "userId")
+        val checklist = json.toModel<Checklist>("title", "userId", "isTeamContext", "boardId")
         val bookId = json["boardId"]
         val id = if (bookId != null) {
             val uuid = UUID.fromString(bookId.textValue())

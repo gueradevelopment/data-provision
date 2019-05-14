@@ -22,7 +22,7 @@ class BoardController(
 ): IBoardController {
 
     override fun create(json: JsonNode): String {
-        val board = json.toModel<Board>("title", "userId", "isTeamContext")
+        val board = json.toModel<Board>("title", "userId", "isTeamContext", "guerabookId")
         val bookId = json["guerabookId"]
         val id = if (bookId != null) {
             val uuid = UUID.fromString(bookId.textValue())

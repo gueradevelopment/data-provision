@@ -23,7 +23,7 @@ class TaskController(
 ): ITaskController {
 
     override fun create(json: JsonNode): String {
-        val task = json.toModel<Task>("title", "userId")
+        val task = json.toModel<Task>("title", "userId", "isTeamContext", "checklistId")
         val checklistId = json["checklistId"]
         val id = if (checklistId != null) {
             val uuid = UUID.fromString(checklistId.textValue())

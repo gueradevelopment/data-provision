@@ -72,7 +72,7 @@ data class Checklist(
     override val isTeamContext: Boolean = false,
     val title: String,
     val boardId: String,
-    val description: String,
+    val description: String = "",
     var completionDate: Date = Date.from(Instant.now()),
     val completionState: CompletionState = CompletionState.Todo,
     @DBRef @JsonIgnore val tasks: MutableSet<Task> = mutableSetOf()
@@ -98,7 +98,7 @@ data class Task(
     override val isTeamContext: Boolean = false,
     val title: String,
     val checklistId: String,
-    val description: String,
+    val description: String = "",
     var completionDate: Date = Date.from(Instant.now()),
     val completionState: CompletionState = CompletionState.Todo
 ): Identified {

@@ -24,9 +24,9 @@ class ChecklistController(
 
     override fun create(json: JsonNode): String {
         val checklist = json.toModel<Checklist>("title", "userId", "boardId")
-        val bookId = json["boardId"]
-        val id = if (bookId != null) {
-            val uuid = UUID.fromString(bookId.textValue())
+        val boardId = json["boardId"]
+        val id = if (boardId != null) {
+            val uuid = UUID.fromString(boardId.textValue())
             checklistService.add(checklist.copy(parentId = uuid.toString()), uuid)
         } else checklistService.add(checklist)
         return Success(id.asJsonNode("id")).toString()

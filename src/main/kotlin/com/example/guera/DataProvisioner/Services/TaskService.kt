@@ -1,5 +1,6 @@
 package com.example.guera.DataProvisioner.Services
 
+import com.example.guera.DataProvisioner.Exceptions.NotFoundException
 import com.example.guera.DataProvisioner.Interfaces.ITaskService
 import com.example.guera.DataProvisioner.Models.Task
 import com.example.guera.DataProvisioner.Repositories.IChecklistRepository
@@ -18,8 +19,8 @@ class TaskService(
 ) : AbstractService<Task>(taskRepository), ITaskService {
 
     override fun add(task: Task, checklistId: UUID): UUID {
+        val checklist = checklistRepository.findByIdOrNull(checklistId) ?: throw NotFoundException("Checklist", checklistId.toString())
         val id = add(task)
-        val checklist = checklistRepository.findByIdOrNull(checklistId) ?: return UUID(0, 0)
         checklist.tasks.add(task)
         checklistRepository.save(checklist)
         return id

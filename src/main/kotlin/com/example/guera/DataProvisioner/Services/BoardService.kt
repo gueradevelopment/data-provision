@@ -1,5 +1,6 @@
 package com.example.guera.DataProvisioner.Services
 
+import com.example.guera.DataProvisioner.Exceptions.NotFoundException
 import com.example.guera.DataProvisioner.Extensions.unwrap
 import com.example.guera.DataProvisioner.Interfaces.IBoardService
 import com.example.guera.DataProvisioner.Interfaces.IChecklistService
@@ -20,7 +21,7 @@ class BoardService(
 
     override fun add(board: Board, gueraBookId: UUID): UUID {
         val id = add(board)
-        val gueraBook = guerabookRepository.findById(gueraBookId).unwrap() ?: return UUID(0, 0)
+        val gueraBook = guerabookRepository.findById(gueraBookId).unwrap() ?: throw NotFoundException("Guerabook", gueraBookId.toString())
         gueraBook.boards.add(board)
         guerabookRepository.save(gueraBook)
         return id

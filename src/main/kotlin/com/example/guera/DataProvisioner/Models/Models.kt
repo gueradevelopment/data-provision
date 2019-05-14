@@ -48,12 +48,14 @@ data class Board(
     @Id override val id: UUID = UUID.randomUUID(),
     override val userId: String,
     override val isTeamContext: Boolean = false,
-    val guerabookId: String,
+    @JsonIgnore val parentId: String = "",
     val title: String,
     @DBRef @JsonIgnore val checklists: MutableSet<Checklist> = mutableSetOf()
 ): Identified {
 
     @JsonProperty fun getChecklistIds() = checklists.map { it.id.toString() }
+
+    @JsonProperty fun getGuerabookId() = parentId
 
     override fun toString(): String = """
         type: Board
@@ -71,7 +73,7 @@ data class Checklist(
     override val userId: String,
     override val isTeamContext: Boolean = false,
     val title: String,
-    val boardId: String,
+    @JsonIgnore val parentId: String = "",
     val description: String = "",
     var completionDate: Date = Date.from(Instant.now()),
     val completionState: CompletionState = CompletionState.Todo,
@@ -79,6 +81,8 @@ data class Checklist(
 ): Identified {
 
     @JsonProperty fun getTaskIds() = tasks.map { it.id.toString() }
+
+    @JsonProperty fun getBoardId() = parentId
 
     override fun toString(): String = """
         type: Checklist
@@ -97,11 +101,13 @@ data class Task(
     override val userId: String,
     override val isTeamContext: Boolean = false,
     val title: String,
-    val checklistId: String,
+    @JsonIgnore val parentId: String = "",
     val description: String = "",
     var completionDate: Date = Date.from(Instant.now()),
     val completionState: CompletionState = CompletionState.Todo
 ): Identified {
+
+    @JsonProperty fun getChecklistId() = parentId
 
     override fun toString(): String = """
         type: Task

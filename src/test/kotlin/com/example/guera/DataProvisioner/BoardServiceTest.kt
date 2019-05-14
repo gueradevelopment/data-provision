@@ -34,7 +34,7 @@ class BoardServiceTest {
 
     @Test
     fun BoardBasicFlow() {
-        val board = Board(title = "Senate", userId = "Generic", guerabookId = "")
+        val board = Board(title = "Senate", userId = "Generic", parentId = "")
         val id = boardService.add(board)
         val dbBoard = boardService.find(id)!!
         Assert.assertNotNull(dbBoard)
@@ -47,10 +47,10 @@ class BoardServiceTest {
 
     @Test
     fun BoardAddElementAndCascadeDelete() {
-        val board = Board(title = "Senate", userId = "Generic", guerabookId = "")
+        val board = Board(title = "Senate", userId = "Generic", parentId = "")
         val id  = boardService.add(board)
-        val checklistA = Checklist(title = "Checklist A", userId = "Generic", description = "", boardId = "")
-        val checklistB = Checklist(title = "Checklist B", userId = "Generic", description = "", boardId = "")
+        val checklistA = Checklist(title = "Checklist A", userId = "Generic", description = "", parentId = "")
+        val checklistB = Checklist(title = "Checklist B", userId = "Generic", description = "", parentId = "")
         val idA = checklistService.add(checklistA, id)
         val idB = checklistService.add(checklistB, id)
         val boardIds = mutableListOf(idA, idB)

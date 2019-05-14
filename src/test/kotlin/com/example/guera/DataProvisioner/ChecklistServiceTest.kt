@@ -34,7 +34,7 @@ class ChecklistServiceTest {
 
     @Test
     fun ChecklistBasicFlow() {
-        val checklist = Checklist(title = "Senate", userId = "Generic", description = "", boardId = "")
+        val checklist = Checklist(title = "Senate", userId = "Generic", description = "", parentId = "")
         val id = checklistService.add(checklist)
         val dbChecklist = checklistService.find(id)!!
         Assert.assertNotNull(dbChecklist)
@@ -47,10 +47,10 @@ class ChecklistServiceTest {
 
     @Test
     fun ChecklistAddElementAndCascadeDelete() {
-        val checklist = Checklist(title = "Senate", userId = "Generic", description = "", boardId = "")
+        val checklist = Checklist(title = "Senate", userId = "Generic", description = "", parentId = "")
         val id  = checklistService.add(checklist)
-        val taskA = Task(title = "Task A", userId = "Generic", description = "", checklistId = "")
-        val taskB = Task(title = "Task B", userId = "Generic", description = "", checklistId = "")
+        val taskA = Task(title = "Task A", userId = "Generic", description = "", parentId = "")
+        val taskB = Task(title = "Task B", userId = "Generic", description = "", parentId = "")
         val idA = taskService.add(taskA, id)
         val idB = taskService.add(taskB, id)
         val boardIds = mutableListOf(idA, idB)

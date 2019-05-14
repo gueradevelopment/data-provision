@@ -22,7 +22,7 @@ class GuerabookController(
 
 
     override fun create(json: JsonNode): String {
-        val guerabook = json.toModel<Guerabook>("title", "userId", "isTeamContext")
+        val guerabook = json.toModel<Guerabook>("title", "userId")
         val id = guerabookService.add(guerabook)
         return Success(id.asJsonNode("id")).toString()
     }

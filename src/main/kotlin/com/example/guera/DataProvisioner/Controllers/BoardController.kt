@@ -22,11 +22,11 @@ class BoardController(
 ): IBoardController {
 
     override fun create(json: JsonNode): String {
-        val board = json.toModel<Board>("title", "userId", "isTeamContext", "guerabookId")
+        val board = json.toModel<Board>("title", "userId", "guerabookId")
         val bookId = json["guerabookId"]
         val id = if (bookId != null) {
             val uuid = UUID.fromString(bookId.textValue())
-            boardService.add(board.copy(guerabookId = uuid.toString()), uuid)
+            boardService.add(board.copy(parentId = uuid.toString()), uuid)
         } else boardService.add(board)
         return Success(id.asJsonNode("id")).toString()
     }

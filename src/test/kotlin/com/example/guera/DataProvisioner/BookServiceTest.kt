@@ -49,8 +49,8 @@ class BookServiceTest {
     fun BookaddElementAndCascadeDelete() {
         val book = Guerabook(title = "Senate", userId = "Generic")
         val id  = guerabookService.add(book)
-        val boardA = Board(title = "Board A", userId = "Generic", guerabookId = "")
-        val boardB = Board(title = "Board B", userId = "Generic", guerabookId = "")
+        val boardA = Board(title = "Board A", userId = "Generic", parentId = "")
+        val boardB = Board(title = "Board B", userId = "Generic", parentId = "")
         val idA = boardService.add(boardA, id)
         val idB = boardService.add(boardB, id)
         val boardIds = mutableListOf(idA, idB)

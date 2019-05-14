@@ -23,12 +23,12 @@ class TaskController(
 ): ITaskController {
 
     override fun create(json: JsonNode): String {
-        val board = json.toModel<Task>("title", "userId")
+        val task = json.toModel<Task>("title", "userId")
         val checklistId = json["checklistId"]
         val id = if (checklistId != null) {
             val uuid = UUID.fromString(checklistId.textValue())
-            taskService.add(board, uuid)
-        } else taskService.add(board)
+            taskService.add(task.copy(checklistId = uuid.toString()), uuid)
+        } else taskService.add(task)
         return Success(id.asJsonNode("id")).toString()
     }
 

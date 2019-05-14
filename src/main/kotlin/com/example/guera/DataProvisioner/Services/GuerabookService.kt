@@ -14,9 +14,9 @@ class GuerabookService(
 ) : AbstractService<Guerabook>(guerabookRepository), IGuerabookService {
 
     override fun remove(id: UUID): Boolean {
-        val success = super.remove(id)
         val childrenId = find(id)?.getBoardIds()
         val childSuccess = childrenId?.map { boardService.remove(UUID.fromString(it)) }
+        val success = super.remove(id)
         return success && childSuccess?.fold(true) {prev, curr -> prev && curr} ?: true
     }
 

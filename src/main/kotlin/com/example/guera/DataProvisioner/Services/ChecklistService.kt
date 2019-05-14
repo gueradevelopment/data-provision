@@ -30,9 +30,9 @@ class ChecklistService(
     }
 
     override fun remove(id: UUID): Boolean {
-        val success = super.remove(id)
         val childrenId = find(id)?.getTaskIds()
         val childSuccess = childrenId?.map { taskService.remove(UUID.fromString(it)) }
+        val success = super.remove(id)
         return success && childSuccess?.fold(true) {prev, curr -> prev && curr} ?: true
     }
 

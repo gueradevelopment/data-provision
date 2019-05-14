@@ -27,7 +27,7 @@ class ChecklistController(
         val bookId = json["boardId"]
         val id = if (bookId != null) {
             val uuid = UUID.fromString(bookId.textValue())
-            checklistService.add(checklist, uuid)
+            checklistService.add(checklist.copy(boardId = uuid.toString()), uuid)
         } else checklistService.add(checklist)
         return Success(id.asJsonNode("id")).toString()
     }
@@ -56,7 +56,7 @@ class ChecklistController(
         val id = json["id"].textValue()
         val uuid = try { UUID.fromString(id) } catch (e: IllegalArgumentException) { throw BadRequestException("id") }
         val success = checklistService.remove(uuid)
-        return if (success) Success(null).toString() else Failure("Deletion Failure").toString()
+        return if (success) Success(null).toString() else Failure("Deletion Failure", "InternalServerError").toString()
     }
 
     override fun update(json: JsonNode): String {
@@ -72,6 +72,6 @@ class ChecklistController(
         val date = checklistService.markAsComplete(uuid)
         val response = date?.asJsonNode("date")
         return if (response != null) Success(response).toString()
-        else Failure("Id of Checklist does not exist or it has already been marked as completed").toString()
+        else Failure("Id of Checklist does not exist or it has already been marked as completed", "NotFoundException").toString()
     }
 }

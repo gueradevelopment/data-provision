@@ -40,23 +40,5 @@ class DataProvisionerApplication {
 }
 
 fun main(args: Array<String>) {
-    val context = runApplication<DataProvisionerApplication>(*args)
-
-    /*val boardService: IBoardService = context.getBean()
-    val taskService: ITaskService = context.getBean()
-    val checkService: IChecklistService = context.getBean()
-
-    var checklistId = checkService.add(Checklist(title = "Basic Checklist", description = "I am the Senate", board = null))
-    val task1 = Task(title = "Do the laundry", description = "", checklist = null)
-    val task2 = Task(title = "Invoke magic", description = "", checklist = null)
-
-    val task = taskService.find(taskService.add(task1, checklistId))
-    taskService.add(task2, checklistId)
-
-
-    val gotCheck = checkService.find(checklistId)
-    gotCheck?.let {
-        val tasks = it.tasksProxy()
-        println(tasks[0].checkl ist)
-    }*/
+    runApplication<DataProvisionerApplication>(*args)
 }

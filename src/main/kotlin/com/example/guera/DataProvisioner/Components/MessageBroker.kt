@@ -36,12 +36,12 @@ class MessageBroker(
         val response = try {
             route(message.messageProperties.receivedRoutingKey, payload)
         } catch (e: DataProvisionException) {
-            Failure(e.message ?: "Error").toString()
+            Failure(e.message ?: "Error", e::class.simpleName ?: "UnknownException").toString()
         } catch (e: IndexOutOfBoundsException) {
-            Failure("Incorrect routing key format. Should be <type>.<object>.<action>").toString()
+            Failure("Incorrect routing key format. Should be <type>.<object>.<action>", "BadRequestException").toString()
         } catch (e: Exception) {
             e.cause?.printStackTrace() ?: e.printStackTrace()
-            Failure("Internal Server Failure").toString()
+            Failure("Internal Server Failure", "InternalServerError").toString()
         }
         println(message.messageProperties)
         println("Replying to: ${message.messageProperties.replyTo}")

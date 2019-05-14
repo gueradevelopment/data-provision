@@ -33,13 +33,14 @@ data class Success(val data: Any?): Message("success") {
 
 }
 
-data class Failure(val reason: String): Message("error") {
+data class Failure(val reason: String, val errorType: String = "InternalServerError"): Message("error") {
 
     override fun toString(): String {
         val mapper = ObjectMapper()
         val json = mapper.createObjectNode()
             .put("type", type)
             .put("reason", reason)
+            .put("errorType", errorType)
 
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json)
     }

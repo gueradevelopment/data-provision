@@ -26,7 +26,7 @@ class BoardController(
         val bookId = json["guerabookId"]
         val id = if (bookId != null) {
             val uuid = UUID.fromString(bookId.textValue())
-            boardService.add(board, uuid)
+            boardService.add(board.copy(guerabookId = uuid.toString()), uuid)
         } else boardService.add(board)
         return Success(id.asJsonNode("id")).toString()
     }
@@ -55,7 +55,7 @@ class BoardController(
         val id = json["id"].textValue()
         val uuid = try { UUID.fromString(id) } catch (e: IllegalArgumentException) { throw BadRequestException("id") }
         val success = boardService.remove(uuid)
-        return if (success) Success(null).toString() else Failure("Deletion Failure").toString()
+        return if (success) Success(null).toString() else Failure("Deletion Failure", "InternalServerError").toString()
     }
 
     override fun update(json: JsonNode): String {

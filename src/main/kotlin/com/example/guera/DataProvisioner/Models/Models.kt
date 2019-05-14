@@ -48,6 +48,7 @@ data class Board(
     @Id override val id: UUID = UUID.randomUUID(),
     override val userId: String,
     override val isTeamContext: Boolean = false,
+    val guerabookId: String,
     val title: String,
     @DBRef @JsonIgnore val checklists: MutableSet<Checklist> = mutableSetOf()
 ): Identified {
@@ -70,6 +71,7 @@ data class Checklist(
     override val userId: String,
     override val isTeamContext: Boolean = false,
     val title: String,
+    val boardId: String,
     val description: String,
     var completionDate: Date = Date.from(Instant.now()),
     val completionState: CompletionState = CompletionState.Todo,
@@ -95,6 +97,7 @@ data class Task(
     override val userId: String,
     override val isTeamContext: Boolean = false,
     val title: String,
+    val checklistId: String,
     val description: String,
     var completionDate: Date = Date.from(Instant.now()),
     val completionState: CompletionState = CompletionState.Todo

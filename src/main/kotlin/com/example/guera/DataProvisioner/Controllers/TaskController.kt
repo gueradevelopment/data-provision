@@ -5,11 +5,10 @@ import com.example.guera.DataProvisioner.Exceptions.NotFoundException
 import com.example.guera.DataProvisioner.Extensions.asJsonNode
 import com.example.guera.DataProvisioner.Extensions.expectedProperties
 import com.example.guera.DataProvisioner.Extensions.toModel
+import com.example.guera.DataProvisioner.Extensions.toReq
 import com.example.guera.DataProvisioner.Interfaces.ITaskController
 import com.example.guera.DataProvisioner.Interfaces.ITaskService
-import com.example.guera.DataProvisioner.Models.Failure
-import com.example.guera.DataProvisioner.Models.Success
-import com.example.guera.DataProvisioner.Models.Task
+import com.example.guera.DataProvisioner.Models.*
 import com.fasterxml.jackson.databind.JsonNode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -60,9 +59,15 @@ class TaskController(
     }
 
     override fun update(json: JsonNode): String {
-        val board = json.toModel<Task>("id")
-        taskService.modify(board)
-        return Success(null).toString()
+        val request = json.toReq<TaskReq>()
+        val task = taskService.find(request.id) ?: throw NotFoundException("Task", request.id.toString())
+        val query = task.copy(
+            title = request.title ?: task.title,
+            description = request.description ?: task.description,
+            completionState = request.completionState ?: task.completionState
+        )
+        val success = taskService.modify(query)
+        return if (success) Success(null).toString() else throw NotFoundException("Task", task.id.toString())
     }
 
     override fun markAsComplete(json: JsonNode): String {

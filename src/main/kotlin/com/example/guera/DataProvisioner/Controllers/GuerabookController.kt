@@ -5,9 +5,11 @@ import com.example.guera.DataProvisioner.Exceptions.NotFoundException
 import com.example.guera.DataProvisioner.Extensions.asJsonNode
 import com.example.guera.DataProvisioner.Extensions.expectedProperties
 import com.example.guera.DataProvisioner.Extensions.toModel
+import com.example.guera.DataProvisioner.Extensions.toReq
 import com.example.guera.DataProvisioner.Interfaces.IGuerabookController
 import com.example.guera.DataProvisioner.Models.Failure
 import com.example.guera.DataProvisioner.Models.Guerabook
+import com.example.guera.DataProvisioner.Models.GuerabookReq
 import com.example.guera.DataProvisioner.Models.Success
 import com.example.guera.DataProvisioner.Services.GuerabookService
 import com.fasterxml.jackson.databind.JsonNode
@@ -55,9 +57,13 @@ class GuerabookController(
     }
 
     override fun update(json: JsonNode): String {
-        val guerabook = json.toModel<Guerabook>("id")
-        guerabookService.modify(guerabook)
-        return Success(null).toString()
+        val request = json.toReq<GuerabookReq>()
+        val guerabook = guerabookService.find(request.id) ?: throw NotFoundException("Checklist", request.id.toString())
+        val query = guerabook.copy(
+            title = request.title ?: guerabook.title
+        )
+        val success = guerabookService.modify(query)
+        return if (success) Success(null).toString() else throw NotFoundException("Guerabook", guerabook.id.toString())
     }
 
 }

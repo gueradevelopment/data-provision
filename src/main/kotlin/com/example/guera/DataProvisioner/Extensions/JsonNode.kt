@@ -16,6 +16,13 @@ inline fun <reified T: Identified> JsonNode.toModel(vararg fields: String): T = 
     throw BadRequestException(*properties)
 }
 
+inline fun <reified T> JsonNode.toReq(): T = try {
+    jacksonObjectMapper().treeToValue(this, T::class.java)
+} catch (e: JsonProcessingException) {
+    e.printStackTrace()
+    throw BadRequestException("Could not parse request")
+}
+
 inline fun <T> JsonNode.property(name: String, cast: (JsonNode) -> T): T {
     val prop = if (this.has(name)) this[name] else throw BadRequestException(name)
     return cast(prop)

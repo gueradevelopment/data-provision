@@ -31,7 +31,7 @@ data class Guerabook(
     @DBRef @JsonIgnore val boards: MutableSet<Board> = mutableSetOf()
 ): Identified {
 
-    @JsonProperty fun getBoardIds() = this.boards.map { it.id.toString() }
+    @JsonIgnore fun getBoardIds() = this.boards.map { it.id.toString() }
 
     override fun toString(): String = """
         type: Guerabook
@@ -53,7 +53,7 @@ data class Board(
     @DBRef @JsonIgnore val checklists: MutableSet<Checklist> = mutableSetOf()
 ): Identified {
 
-    @JsonProperty fun getChecklistIds() = checklists.map { it.id.toString() }
+    @JsonIgnore fun getChecklistIds() = checklists.map { it.id.toString() }
 
     @JsonProperty fun getGuerabookId() = parentId
 
@@ -80,7 +80,7 @@ data class Checklist(
     @DBRef @JsonIgnore val tasks: MutableSet<Task> = mutableSetOf()
 ): Identified {
 
-    @JsonProperty fun getTaskIds() = tasks.map { it.id.toString() }
+    @JsonIgnore fun getTaskIds() = tasks.map { it.id.toString() }
 
     @JsonProperty fun getBoardId() = parentId
 

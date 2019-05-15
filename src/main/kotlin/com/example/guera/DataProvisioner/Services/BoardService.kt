@@ -10,6 +10,7 @@ import com.example.guera.DataProvisioner.Repositories.IGuerabookRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.lang.Exception
 import java.util.*
 
 @Service("IBoardService")
@@ -28,9 +29,14 @@ class BoardService(
     }
 
     override fun remove(id: UUID): Boolean {
-        val childrenId = find(id)?.getChecklistIds()
-        val childSuccess = childrenId?.map { checklistService.remove(UUID.fromString(it)) }
+        val board  = find(id) ?: throw NotFoundException("Board", id.toString())
+        val childrenId = board.getChecklistIds()
+        val childSuccess = childrenId.map { checklistService.remove(UUID.fromString(it)) }
+        val parent = guerabookRepository.findById(UUID.fromString(board.parentId)).unwrap()
+        val newBoards = parent?.boards?.filter { it.id != id }?.toMutableSet()
+        val newParent = parent?.copy(boards = newBoards!!) ?: throw Exception("Rip")
+        guerabookRepository.save(newParent)
         val success = super.remove(id)
-        return success && childSuccess?.fold(true) {prev, curr -> prev && curr} ?: true
+        return success  &&  childSuccess.fold(true) {prev, curr -> prev && curr} ?: true
     }
 }

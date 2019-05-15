@@ -9,10 +9,9 @@ import com.example.guera.DataProvisioner.Repositories.IBoardRepository
 import com.example.guera.DataProvisioner.Repositories.IChecklistRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
+import java.lang.Exception
 import java.time.Instant
 import java.util.*
-import kotlin.reflect.jvm.internal.impl.util.Check
 
 @Service("IChecklistService")
 class ChecklistService(
@@ -31,8 +30,13 @@ class ChecklistService(
     }
 
     override fun remove(id: UUID): Boolean {
+        val checklist  = find(id) ?: throw NotFoundException("Checklist", id.toString())
         val childrenId = find(id)?.getTaskIds()
         val childSuccess = childrenId?.map { taskService.remove(UUID.fromString(it)) }
+        val parent = boardRepository.findById(UUID.fromString(checklist.parentId)).unwrap()
+        val newChecklists = parent?.checklists?.filter { it.id != id }?.toMutableSet()
+        val newParent = parent?.copy(checklists = newChecklists!!) ?: throw Exception("Rip")
+        boardRepository.save(newParent)
         val success = super.remove(id)
         return success && childSuccess?.fold(true) {prev, curr -> prev && curr} ?: true
     }

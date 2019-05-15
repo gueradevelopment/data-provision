@@ -31,7 +31,7 @@ class ChecklistController(
             val uuid = UUID.fromString(boardId.textValue())
             checklistService.add(checklist.copy(parentId = uuid.toString()), uuid)
         } else checklistService.add(checklist)
-        return Success(id.asJsonNode("id")).toString()
+            return Success(id.asJsonNode("id")).toString()
     }
 
     override fun retrieve(json: JsonNode): String {
